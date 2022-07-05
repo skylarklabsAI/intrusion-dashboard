@@ -24,7 +24,7 @@ const locations = {
     name: "Parking Lot",
     cameras: [
       {
-        camera_id: 2,
+        camera_id: 1,
         name: "Front Cam LS 1",
         url: "/2a.mp4",
         thumbnail_url: "/images/parking_lot_thumbnail.png",
@@ -35,7 +35,7 @@ const locations = {
     name: "Backyard",
     cameras: [
       {
-        camera_id: 1,
+        camera_id: 2,
         name: "Cam HX 2",
         url: "/1a.mp4",
         thumbnail_url: "/images/house_entry_thumbnail.png",
@@ -66,6 +66,33 @@ const locations = {
   },
 };
 
+const cameraList = [
+  {
+    camera_id: 1,
+    name: "Front Cam LS 1",
+    url: "/2a.mp4",
+    thumbnail_url: "/images/parking_lot_thumbnail.png",
+  },
+  {
+    camera_id: 2,
+    name: "Cam HX 2",
+    url: "/1a.mp4",
+    thumbnail_url: "/images/house_entry_thumbnail.png",
+  },
+  {
+    camera_id: 3,
+    name: "Cam T 100",
+    url: "/3a.mp4",
+    thumbnail_url: "/images/house_exit_thumbnail.png",
+  },
+  {
+    camera_id: 4,
+    name: "Cam G 141",
+    url: "/4a.mp4",
+    thumbnail_url: "/images/4a_thumbnail.png",
+  },
+];
+
 const recordList = [
   // {
   //   location: "Lobby",
@@ -78,10 +105,14 @@ const recordList = [
 
 const HomeScreen = () => {
   const [selectedLocation, setSelectedLocation] = React.useState("all");
-  const [selectedCamera, setSelectedCamera] = React.useState(null);
+  const [selectedCamera, setSelectedCamera] = React.useState(cameraList[0]);
   const [records, setRecords] = React.useState([]);
   const [openAlertDialog, setOpenAlertDialog] = React.useState(false);
   const [alertData, setAlertData] = React.useState({});
+
+  const playNext = () => {
+    setSelectedCamera(cameraList[selectedCamera["camera_id"] % 4]);
+  };
 
   // React.useEffect(() => {
   //   setRecords([]);
@@ -116,6 +147,7 @@ const HomeScreen = () => {
             setOpenAlertDialog={setOpenAlertDialog}
             alertData={alertData}
             setAlertData={setAlertData}
+            playNext={playNext}
           />
         </Grid>
         <Grid item xs={12} md={4}>
@@ -224,6 +256,7 @@ const LiveWrapper = ({
   setOpenAlertDialog,
   alertData,
   setAlertData,
+  playNext,
 }) => {
   const handleLocationChange = (event) => {
     setSelectedLocation(event.target.value);
@@ -231,13 +264,13 @@ const LiveWrapper = ({
   const [menuList, setMenuList] = React.useState({});
   React.useEffect(() => {
     const temp = { all: "All Cameras" };
-    const flag = true;
+    // const flag = true;
     Object.keys(locations).map((id) => {
       temp[id] = locations[id]["name"];
-      if (flag && locations[id]["cameras"].length) {
-        setSelectedCamera(locations[id]["cameras"][0]);
-        flag = false;
-      }
+      // if (flag && locations[id]["cameras"].length) {
+      //   setSelectedCamera(locations[id]["cameras"][0]);
+      //   flag = false;
+      // }
     });
     setMenuList(temp);
   }, []);
@@ -273,6 +306,7 @@ const LiveWrapper = ({
             setOpenAlertDialog={setOpenAlertDialog}
             alertData={alertData}
             setAlertData={setAlertData}
+            playNext={playNext}
           />
         </Box>
       </Box>

@@ -2,7 +2,7 @@ import ReactPlayer from "react-player";
 import React, { createRef, useEffect, useState } from "react";
 
 const recordsList = {
-  1: [
+  2: [
     {
       sec: 8,
       cropped: ["1a21.png"],
@@ -22,7 +22,7 @@ const recordsList = {
       replace: true,
     },
   ],
-  2: [
+  1: [
     {
       sec: 15,
       cropped: ["2a21.png"],
@@ -128,6 +128,7 @@ const DummyPlayer = ({
   setOpenAlertDialog,
   alertData,
   setAlertData,
+  playNext
 }) => {
   const videoRef = createRef();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -173,11 +174,15 @@ const DummyPlayer = ({
       ref={videoRef}
       url={url}
       playing={true}
-      loop={true}
+      // loop={true}
       muted={true}
       progressInterval={1000}
       // light={true}
       onProgress={(e) => handleOnProgress(e)}
+      onEnded={() => {
+        // console.log("hello");
+        playNext();
+      }}
     />
   );
 };
