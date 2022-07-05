@@ -78,7 +78,7 @@ const CameraListContainer = () => {
     Object.keys(locations).map((location) => {
       if (selectedLocation === "all" || selectedLocation === location) {
         locations[location]["cameras"].map((camera_obj) => {
-          console.log(camera_obj);
+          // console.log(camera_obj);
           temp.push(
             <Box
               m={1.5}

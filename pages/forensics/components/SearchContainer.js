@@ -89,7 +89,7 @@ const SearchContainer = ({ setVehicleRecords, setVehicleRecordsCount }) => {
   };
 
   const handleSearch = () => {
-    console.log(moment(from).toISOString());
+    // console.log(moment(from).toISOString());
     const url = "/app/plate/?limit=40";
     if (color !== "") url += `&color=${color}`;
     if (type !== "") url += `&type=${type}`;
@@ -99,12 +99,12 @@ const SearchContainer = ({ setVehicleRecords, setVehicleRecordsCount }) => {
     api
       .get(url)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setVehicleRecords(res.data.results);
         setVehicleRecordsCount(res.data.count);
       })
       .catch((err) => {
-        console.log(err.response);
+        // console.log(err.response);
       });
   };
 
@@ -272,7 +272,7 @@ const CustomDatePicker = ({ label, value, setValue }) => {
         value={value}
         inputFormat="DD MMM YYYY HH:MM"
         onChange={(newValue) => {
-          console.log(newValue);
+          // console.log(newValue);
           setValue(newValue);
         }}
         renderInput={(params) => (

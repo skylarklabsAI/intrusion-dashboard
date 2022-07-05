@@ -180,7 +180,11 @@ const DetailWrapper = ({ alertsData, selectedAlert }) => {
   return (
     <Box sx={{ maxHeight: "calc( 100vh - 90px)", overflowY: "scroll" }}>
       <Box m={2}>
-        <Typography mb={1} sx={{ color: "#EDEDED", fontWeight:"500" }} variant="h5">
+        <Typography
+          mb={1}
+          sx={{ color: "#EDEDED", fontWeight: "500" }}
+          variant="h5"
+        >
           Alert Details
         </Typography>
         <FullImageCard
@@ -199,7 +203,12 @@ const DetailWrapper = ({ alertsData, selectedAlert }) => {
             mb={1}
             sx={{ color: "#EDEDED" }}
           >
-            <Typography sx={{ color: "#EDEDED", fontWeight:"500" }} variant="h6">Intruders Captured</Typography>
+            <Typography
+              sx={{ color: "#EDEDED", fontWeight: "500" }}
+              variant="h6"
+            >
+              Intruders Captured
+            </Typography>
             <Typography>
               {alertsData &&
                 alertsData[selectedAlert] &&
@@ -238,7 +247,7 @@ const FullImageCard = ({ alertsData, selectedAlert, index, setIndex }) => {
           alertsData[selectedAlert]["full"][index]
         }
         width="100%"
-        style={{marginBottom:"-5px", borderRadius:"9px"}}
+        style={{ marginBottom: "-5px", borderRadius: "9px" }}
       />
       <Box
         sx={{
@@ -247,7 +256,7 @@ const FullImageCard = ({ alertsData, selectedAlert, index, setIndex }) => {
           left: 0,
           height: "100%",
           width: "100%",
-          borderRadius:"9px",
+          borderRadius: "9px",
           background:
             "linear-gradient(0deg, rgba(18, 23, 69, 0.75) 0%, rgba(36, 36, 36, 0.22) 40.41%, rgba(142, 142, 142, 0) 77.6%)",
         }}
@@ -268,9 +277,9 @@ const FullImageCard = ({ alertsData, selectedAlert, index, setIndex }) => {
             setIndex(index - 1);
           }}
           disabled={index === 0}
-          sx={{ml:1}}
+          sx={{ ml: 1 }}
         >
-          <ArrowBackIosIcon sx={{fontSize:"18px"}} />
+          <ArrowBackIosIcon sx={{ fontSize: "18px" }} />
         </IconButton>
         <Typography>
           {index + 1} /{" "}
@@ -279,12 +288,12 @@ const FullImageCard = ({ alertsData, selectedAlert, index, setIndex }) => {
             alertsData[selectedAlert]["cropped"].length}
         </Typography>
         <IconButton
-          sx={{mr:1}}
+          sx={{ mr: 1 }}
           onClick={() => {
             setIndex((index + 1) % alertsData[selectedAlert]["cropped"].length);
           }}
         >
-          <ArrowForwardIosIcon sx={{fontSize:"18px"}} />
+          <ArrowForwardIosIcon sx={{ fontSize: "18px" }} />
         </IconButton>
       </Box>
     </Box>
@@ -348,7 +357,7 @@ const ListWrapper = ({ alertsData, setSelectedAlert, selectedAlert }) => {
   const [from, setFrom] = useState(null);
   const [to, setTo] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState("all");
-  const [menuList, setMenuList] = useState({"all":"All Cameras"});
+  const [menuList, setMenuList] = useState({ all: "All Cameras" });
   const handleLocationChange = (event) => {
     setSelectedLocation(event.target.value);
   };
@@ -366,22 +375,22 @@ const ListWrapper = ({ alertsData, setSelectedAlert, selectedAlert }) => {
           <CustomDatePicker label="Date - To" value={to} setValue={setTo} />
         </Box>
         <Tooltip title="Disabled">
-        <Box m={2} ml={0}>
-        <CustomDropDown
-          Icon={LocationOnIcon}
-          value={selectedLocation}
-          handleChange={handleLocationChange}
-            menuList={menuList}
-            disabled
-        />
-        </Box>
+          <Box m={2} ml={0}>
+            <CustomDropDown
+              Icon={LocationOnIcon}
+              value={selectedLocation}
+              handleChange={handleLocationChange}
+              menuList={menuList}
+              disabled
+            />
+          </Box>
         </Tooltip>
         <Box flex={1} />
         <CustomOutlinedButton
           text="Filter"
           size="small"
           StartIcon={FilterListIcon}
-          sx={{fontWeight:"400"}}
+          sx={{ fontWeight: "400" }}
           disabled
         />
       </Box>
@@ -422,9 +431,17 @@ const AlertCard = ({ isSelected, data, onClick = () => {} }) => {
       <Box
         width="100%"
         position="relative"
-        sx={{ border: isSelected ? "3px solid #1170FF" : "none", borderRadius:"9px", overflow:"hidden" }}
+        sx={{
+          border: isSelected ? "3px solid #1170FF" : "none",
+          borderRadius: "9px",
+          overflow: "hidden",
+        }}
       >
-        <img src={data && data["thumbnail_url"]} width="100%" style={{marginBottom:"-5px"}} />
+        <img
+          src={data && data["thumbnail_url"]}
+          width="100%"
+          style={{ marginBottom: "-5px" }}
+        />
         <Box
           position="absolute"
           height="100%"
@@ -452,8 +469,12 @@ const AlertCard = ({ isSelected, data, onClick = () => {} }) => {
           display="flex"
           justifyContent="space-between"
         >
-          <Typography ml={1} variant="body2">{data && data["location"]}</Typography>
-          <Typography mr={1} variant="body2">Suspects: {data && data["suspects"]}</Typography>
+          <Typography ml={1} variant="body2">
+            {data && data["location"]}
+          </Typography>
+          <Typography mr={1} variant="body2">
+            Suspects: {data && data["suspects"]}
+          </Typography>
         </Box>
         <Box position="absolute" width="100%" top="10px">
           <Typography ml={1} variant="body2">
@@ -478,9 +499,9 @@ const CustomDatePicker = ({ label, value, setValue }) => {
         maxDate={moment()}
         value={value}
         inputFormat="DD MMM YYYY"
-        sx={{borderRadius:"9px !important"}}
+        sx={{ borderRadius: "9px !important" }}
         onChange={(newValue) => {
-          console.log(newValue);
+          // console.log(newValue);
           setValue(newValue);
         }}
         renderInput={(params) => (
@@ -503,7 +524,7 @@ const CustomHourPicker = ({ label, value, setValue }) => {
         inputFormat="HH"
         views={["hours"]}
         onChange={(newValue) => {
-          console.log(newValue);
+          // console.log(newValue);
           setValue(newValue);
         }}
         renderInput={(params) => (

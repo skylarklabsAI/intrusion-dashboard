@@ -117,7 +117,7 @@ const MainLayout = ({ children }) => {
   }, []);
 
   React.useEffect(() => {
-    console.log(asPath.split("/"));
+    // console.log(asPath.split("/"));
     const temp = asPath.split("/");
     setPath(temp[1]);
   }, [asPath]);
@@ -245,7 +245,7 @@ const MainLayout = ({ children }) => {
                             document.exitFullscreen();
                           }
                         }
-                        
+
                         setIsFullScreen(true);
                       }}
                     >

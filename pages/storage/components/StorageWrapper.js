@@ -180,7 +180,7 @@ const CustomDatePicker = ({ label, value, setValue }) => {
         value={value}
         inputFormat="DD MMM YYYY"
         onChange={(newValue) => {
-          console.log(newValue);
+          // console.log(newValue);
           setValue(newValue);
         }}
         renderInput={(params) => (
@@ -201,7 +201,7 @@ const CustomHourPicker = ({ label, value, setValue }) => {
         inputFormat="HH"
         views={["hours"]}
         onChange={(newValue) => {
-          console.log(newValue);
+          // console.log(newValue);
           setValue(newValue);
         }}
         renderInput={(params) => (

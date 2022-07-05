@@ -110,7 +110,7 @@ const recordsList = {
     },
     {
       sec: 62,
-      cropped: ["4a21.png", "4a22.png", "4a23.png", "4a24.png","4a25.png"],
+      cropped: ["4a21.png", "4a22.png", "4a23.png", "4a24.png", "4a25.png"],
       full: ["4a11.png", "4a12.png", "4a13.png", "4a14.png", "4a15.png"],
       location: "Complex 4 - Region 2",
       camera: "Cam G 141",
@@ -136,14 +136,14 @@ const DummyPlayer = ({
   }, [selectedCamera]);
 
   const handleOnProgress = (e) => {
-    console.log(parseInt(e.playedSeconds));
+    // console.log(parseInt(e.playedSeconds));
     const temp = {};
     if (
       recordsList[selectedCamera["camera_id"]][
         currentIndex % recordsList[selectedCamera["camera_id"]].length
       ]["sec"] === parseInt(e.playedSeconds)
     ) {
-      console.log("helloooo");
+      // console.log("helloooo");
       temp = {
         time: new Date(),
         ...recordsList[selectedCamera["camera_id"]][

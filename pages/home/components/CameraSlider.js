@@ -34,7 +34,7 @@ const CameraSlider = ({
   const apiRef = useRef();
   const [components, setComponents] = useState([]);
   useEffect(() => {
-    console.log(selectedCamera);
+    // console.log(selectedCamera);
     apiRef.current?.scrollToItem?.(
       apiRef.current?.getItemElementById(
         selectedCamera && selectedCamera["camera_id"]
@@ -47,18 +47,19 @@ const CameraSlider = ({
     Object.keys(locations).map((location) => {
       if (selectedLocation === "all" || selectedLocation === location) {
         locations[location]["cameras"].map((camera_obj) => {
-          console.log(camera_obj);
+          // console.log(camera_obj);
           temp.push(
             <Box
               sx={{
                 m: 2,
-                mb:0.5,
+                mb: 0.5,
                 boxShadow: 10,
                 width: "270px",
                 borderRadius: "10px",
                 cursor: "pointer",
                 border:
-                selectedCamera&&selectedCamera["camera_id"] === camera_obj["camera_id"]
+                  selectedCamera &&
+                  selectedCamera["camera_id"] === camera_obj["camera_id"]
                     ? "5px solid rgba(92, 157, 255, 1)"
                     : "none",
               }}
@@ -69,7 +70,7 @@ const CameraSlider = ({
               <CameraCard
                 thumbnail={camera_obj["thumbnail_url"]}
                 label={camera_obj["name"]}
-                location={ locations[location]['name']}
+                location={locations[location]["name"]}
                 height="150px"
                 onClick={() => {
                   setSelectedCamera(camera_obj);
