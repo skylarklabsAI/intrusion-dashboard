@@ -9,9 +9,25 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@date-io/moment": "^2.14.0",
+    "@emotion/cache": "^11.9.3",
+    "@emotion/react": "^11.9.3",
+    "@emotion/server": "^11.4.0",
+    "@emotion/styled": "^11.9.3",
+    "@mui/icons-material": "^5.8.4",
+    "@mui/lab": "^5.0.0-alpha.86",
+    "@mui/material": "^5.8.4",
+    "axios": "^0.27.2",
+    "clsx": "^1.1.1",
+    "moment": "^2.29.3",
     "next": "12.2.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-full-screen": "^1.1.1",
+    "react-hls-player": "^3.0.7",
+    "react-horizontal-scrolling-menu": "^3.1.0",
+    "react-player": "^2.10.0",
+    "react-toastify": "^9.0.4"
   },
   "devDependencies": {
     "eslint": "8.19.0",

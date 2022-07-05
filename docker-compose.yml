@@ -1,0 +1,12 @@
+version: "3.2"
+services:
+  web:
+    image: demo-dashboard
+    build: .
+    # command: npm install
+    # command: npm run start
+    command: npm run dev
+    volumes:
+      - ./:/app/
+    ports:
+      - 3007:8080
