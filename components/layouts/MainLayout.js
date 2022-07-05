@@ -204,6 +204,7 @@ const MainLayout = ({ children }) => {
                   </Box>
                   <Stack ml={2}>
                     <Typography
+                      variant="h5"
                       sx={{
                         fontWeight: "600",
                         fontSize: "1.45rem",

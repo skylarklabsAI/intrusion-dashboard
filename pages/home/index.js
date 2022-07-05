@@ -83,9 +83,9 @@ const HomeScreen = () => {
   const [openAlertDialog, setOpenAlertDialog] = React.useState(false);
   const [alertData, setAlertData] = React.useState({});
 
-  React.useEffect(() => {
-    setRecords(recordList);
-  }, []);
+  // React.useEffect(() => {
+  //   setRecords([]);
+  // }, [selectedCamera]);
   return (
     <Box
       sx={{
@@ -177,7 +177,11 @@ const RecordContainer = ({
       />
       <Box display="flex" alignItems="center" m={1}>
         <Icon />
-        <Typography ml={1} sx={{ color: "#EDEDED" }}>
+        <Typography
+          variant="h6"
+          ml={1}
+          sx={{ color: "#EDEDED", fontWeight: "600" }}
+        >
           {label}
         </Typography>
       </Box>
@@ -203,7 +207,7 @@ const RecordContainer = ({
           );
         })}
       </Box>
-      <Divider />
+      {/* <Divider /> */}
     </Box>
   );
 };
@@ -238,13 +242,14 @@ const LiveWrapper = ({
     setMenuList(temp);
   }, []);
   return (
-    <Box m={1}>
-      <Box sx={{ height: "calc( 100vh - 350px)" }}>
+    <Box>
+      <Box sx={{ height: "calc( 100vh - 350px)" }} m={1}>
         <Box display="flex" alignItems="center">
           <VideocamIcon />
           <Typography
             ml={1}
-            sx={{ color: "#EDEDED", fontWeight: "500", fontSize: "18px" }}
+            variant="h6"
+            sx={{ color: "#EDEDED", fontWeight: "600" }}
           >
             {selectedCamera ? selectedCamera["name"] : "Camera Name"}
           </Typography>
@@ -272,13 +277,14 @@ const LiveWrapper = ({
         </Box>
       </Box>
       <Divider />
-      <Box sx={{ height: "230px" }} my={1}>
+      <Box sx={{ height: "225px" }} m={1}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box display="flex">
             <LinkedCameraIcon />{" "}
             <Typography
               ml={1}
-              sx={{ color: "#EDEDED", fontWeight: "500", fontSize: "18px" }}
+              variant="h5"
+              sx={{ color: "#EDEDED", fontWeight: "600" }}
             >
               Cameras
             </Typography>

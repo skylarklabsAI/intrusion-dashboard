@@ -4,6 +4,7 @@ import FullscreenIcon from "@mui/icons-material/Fullscreen";
 const CameraCard = ({
   thumbnail,
   label,
+  location = "",
   // camera_obj = { thumbnail: "", label: "" },
   onClick = {},
   height = "100px",
@@ -51,30 +52,34 @@ const CameraCard = ({
           borderTop: "1px solid rgba(81, 99, 116, 1)",
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "space-between",
         }}
       >
         <Typography
+          ml={1}
           sx={{
             flex: 1,
             color: "white",
             fontSize: "12px",
             lineHeight: "13px",
             fontWeight: "400",
-            textAlign: "center",
           }}
         >
           {label}
-          {/* {camera_obj["label"]} */}
         </Typography>
-        {/* <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ borderColor: "#516374" }}
-        />
-        <IconButton onClick={() => {}}>
-          <FullscreenIcon sx={{ color: "white", mx: 1, fontSize: "18px" }} />
-        </IconButton> */}
+        <Typography
+          mr={1}
+          sx={{
+            flex: 1,
+            color: "white",
+            fontSize: "12px",
+            lineHeight: "13px",
+            fontWeight: "400",
+            textAlign: "right",
+          }}
+        >
+          {location}
+        </Typography>
       </Box>
     </Box>
   );

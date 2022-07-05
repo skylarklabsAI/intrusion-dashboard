@@ -1,13 +1,14 @@
 import * as React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 
-const DetailCard = ({ record, onClick=()=>{} }) => {
+const DetailCard = ({ record, onClick = () => {} }) => {
   return (
     <Box
       flex={1}
-          m={1.5}
-          onClick={onClick}
+      m={1.5}
+      onClick={onClick}
       sx={{
         minWidth: "350px",
         background: "#0F1726",
@@ -16,8 +17,8 @@ const DetailCard = ({ record, onClick=()=>{} }) => {
         display: "flex",
         alignItems: "center",
         overflow: "hidden",
-          height: "130px",
-        cursor:"pointer",
+        height: "130px",
+        cursor: "pointer",
 
         "@media (max-width: 1350px)": {
           // flexDirection: "column",
@@ -33,6 +34,7 @@ const DetailCard = ({ record, onClick=()=>{} }) => {
       position="relative"
     >
       <Box
+        mr={2}
         height="100%"
         width="100%"
         position="relative"
@@ -53,7 +55,6 @@ const DetailCard = ({ record, onClick=()=>{} }) => {
       <Box
         display="flex"
         width="100%"
-        ml={1}
         sx={{
           "@media (max-width: 1350px)": {
             paddingLeft: "10px",
@@ -67,22 +68,34 @@ const DetailCard = ({ record, onClick=()=>{} }) => {
         }}
       >
         <Stack sx={{ flex: 1 }}>
-          <Field title="Location" subtitle={record  && record["location"]} />
+          <Field title="Location" subtitle={record && record["location"]} />
           <Field
             title="Camera"
-            subtitle={record  && record["camera"] ? record["camera"] : "-"}
+            subtitle={record && record["camera"] ? record["camera"] : "-"}
           />
           <Field
             title="Time"
-            subtitle={record  &&  record["time"] ? record["time"].getHours()+":"+record["time"].getMinutes() : "-"}
+            subtitle={
+              record && record["time"]
+                ? record["time"].getHours() + ":" + record["time"].getMinutes()
+                : "-"
+            }
           />
-          <Field title="Suspects" subtitle={record  && record["suspects"]} />
+          <Field title="Suspects" subtitle={record && record["suspects"]} />
         </Stack>
       </Box>
-      <Box sx={{ position: "absolute", bottom: "10px", right: "10px" }}>
+      {/* <Box sx={{ position: "absolute", bottom: "10px", right: "10px" }}>
         <ArrowRightAltIcon
           sx={{
             fontSize: "20px",
+          }}
+        />
+      </Box> */}
+      <Box sx={{ position: "absolute", bottom: "10px", right: "10px" }}>
+        <FiberManualRecordIcon
+          sx={{
+            fontSize: "20px",
+            color: "#FF2950",
           }}
         />
       </Box>

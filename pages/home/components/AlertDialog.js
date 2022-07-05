@@ -1,9 +1,18 @@
-import { Box, Dialog, Grid, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Container,
+  Dialog,
+  Grid,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import BlockIcon from "@mui/icons-material/Block";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useEffect, useState } from "react";
+import CustomOutlinedButton from "../../../components/CustomButton";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const AlertDialog = ({ open, handleClose, alertData }) => {
   const [index, setIndex] = useState(0);
@@ -12,9 +21,11 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
   }, [alertData]);
   return (
     <Dialog
+      PaperComponent={Container}
       maxWidth="lg"
       sx={{
-        background: "rgba(9, 13, 21, 0.7)",
+        background: "rgba(9, 13, 21, 0.8)",
+        borderRadius: "6px",
       }}
       open={open}
       onClose={() => {
@@ -24,10 +35,10 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
     >
       <Box
         sx={{
-          background: "rgba(5, 16, 31, 0.8)",
-          border: "2px solid #FF2950",
+          background: "#040D18dd",
+          border: "2px solid #3B4B82",
           position: "relative",
-
+          borderRadius: "9px",
           p: 4,
           px: 8,
         }}
@@ -38,7 +49,7 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
               handleClose();
             }}
           >
-            <CancelIcon />
+            <CancelIcon sx={{color:"#46567E"}}/>
           </IconButton>
         </Box>
         <Box
@@ -48,18 +59,28 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
           mb={1.5}
         >
           <BlockIcon />
-          <Typography ml={1.5} sx={{ color: "#EDEDED", fontSize: "25px" }}>
+          <Typography
+            ml={1.5}
+            sx={{ color: "#EDEDED", fontSize: "25px", fontWeight: "500" }}
+          >
             Intrusion Alert
           </Typography>
         </Box>
         <Grid container spacing={1} wrap="wrap-reverse">
           <Grid item xs={12} md={5}>
-            <Box display="flex">
+            <Box
+              display="flex"
+              sx={{
+                border: "1px solid rgba(57, 76, 104, 0.5)",
+                borderRadius: "9px",
+                p: 2,
+              }}
+            >
               <Box mx={2} width="100%">
                 <Box
                   display="flex"
                   justifyContent="space-between"
-                  mb={1}
+                  mb={2}
                   sx={{ color: "#EDEDED" }}
                 >
                   <Typography>Intruders Captured</Typography>
@@ -67,28 +88,53 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
                 </Box>
                 <Grid
                   container
-                  spacing={2}
-                  sx={{ height: "450px", overflowY: "scroll" }}
+                  spacing={1}
+                  mt={1}
+                  sx={{ height: "450px", overflowY: "scroll", pr: 1 }}
                 >
                   {alertData &&
                     alertData["cropped"] &&
                     alertData["cropped"].map((url, pos) => {
-                      return <IntrudersCard url={url} alertData={alertData} key={url} isSelected={index===pos} onClick={()=>{setIndex(pos)}} />;
+                      return (
+                        <IntrudersCard
+                          url={url}
+                          alertData={alertData}
+                          key={url}
+                          isSelected={index === pos}
+                          onClick={() => {
+                            setIndex(pos);
+                          }}
+                        />
+                      );
                     })}
                 </Grid>
               </Box>
             </Box>
           </Grid>
           <Grid item xs={12} md={7}>
-            <Box mx={2} width="100%">
-              <Box display="flex" mb={1} sx={{ color: "#EDEDED" }}>
+            <Box mx={2} width="100%" mt={6}>
+              {/* <Box display="flex" mb={1} sx={{ color: "#EDEDED" }}>
                 <Typography>Full View</Typography>
-              </Box>
+              </Box> */}
               <FullImageCard
                 alertData={alertData}
                 index={index}
                 setIndex={setIndex}
               />
+              <Box
+                mt={3}
+                display="flex"
+                width="100%"
+                alignItems="center"
+                justifyContent="space-around"
+              >
+                <CustomOutlinedButton text="Responded" StartIcon={CheckCircleIcon} sx={{fontWeight: "400"}} onClick={() => {
+        handleClose();
+      }} />
+                <CustomOutlinedButton text="Respond Later" sx={{fontWeight: "400" , background:"#202F46", borderTop: "1.5px solid #3C5170"}} onClick={() => {
+        handleClose();
+      }}/>
+              </Box>
             </Box>
           </Grid>
         </Grid>
@@ -99,19 +145,27 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
 
 export default AlertDialog;
 
-const IntrudersCard = ({ url, alertData, isSelected, onClick=()=>{} }) => {
+const IntrudersCard = ({ url, alertData, isSelected, onClick = () => {} }) => {
   return (
-    <Grid item xs={12} md={6}>
+    <Grid item xs={12} md={6} lg={4}>
       <Box
         onClick={onClick}
         position="relative"
         width="100%"
         height="300px"
-        borderRadius="5px"
-        sx={{ overflow: "hidden",border: isSelected ? "3px solid #1170FF" : "none",
-        cursor:"pointer" }}
+        borderRadius="6px"
+        sx={{
+          overflow: "hidden",
+          border: isSelected ? "3px solid #1170FF" : "none",
+          cursor: "pointer",
+        }}
       >
-        <img src={url} width="100%" />
+        <img
+          src={url}
+          width="100%"
+          height="100%"
+          style={{ objectFit: "fill" }}
+        />
         <Box
           sx={{
             position: "absolute",
@@ -143,7 +197,9 @@ const IntrudersCard = ({ url, alertData, isSelected, onClick=()=>{} }) => {
           >
             {alertData["time"].getHours() +
               ":" +
-              alertData["time"].getMinutes()}
+              alertData["time"].getMinutes() +
+              ":" +
+              alertData["time"].getSeconds()}
           </Typography>
         </Box>
       </Box>
@@ -154,7 +210,11 @@ const IntrudersCard = ({ url, alertData, isSelected, onClick=()=>{} }) => {
 const FullImageCard = ({ alertData, index, setIndex }) => {
   return (
     <Box position="relative">
-      <img src={alertData["full"][index]} width="100%" />
+      <img
+        src={alertData["full"][index]}
+        width="100%"
+        style={{ marginBottom: "-5px",borderRadius:"9px"}}
+      />
       <Box
         sx={{
           position: "absolute",
@@ -162,6 +222,8 @@ const FullImageCard = ({ alertData, index, setIndex }) => {
           left: 0,
           height: "100%",
           width: "100%",
+          borderRadius:"9px",
+          overflow:"hidden",
           background:
             "linear-gradient(0deg, rgba(18, 23, 69, 0.75) 0%, rgba(36, 36, 36, 0.22) 40.41%, rgba(142, 142, 142, 0) 77.6%)",
         }}
@@ -178,22 +240,24 @@ const FullImageCard = ({ alertData, index, setIndex }) => {
         }}
       >
         <IconButton
+          sx={{ml:2}}
           onClick={() => {
             setIndex(index - 1);
           }}
           disabled={index === 0}
         >
-          <ArrowBackIosIcon />
+          <ArrowBackIosIcon sx={{ fontSize: "18px" }} />
         </IconButton>
         <Typography>
           {index + 1} / {alertData["full"].length}
         </Typography>
         <IconButton
+          sx={{mr:2}}
           onClick={() => {
             setIndex((index + 1) % alertData["full"].length);
           }}
         >
-          <ArrowForwardIosIcon />
+          <ArrowForwardIosIcon sx={{ fontSize: "18px" }} />
         </IconButton>
       </Box>
     </Box>

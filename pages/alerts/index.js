@@ -18,6 +18,8 @@ import CustomOutlinedButton from "../../components/CustomButton";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import CustomDropDown from "../../components/CustomDropDown";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 const recordsList = {
   1: {
@@ -65,24 +67,29 @@ const recordsList = {
 };
 
 const CustomInputField = styled(TextField)({
-  width: "200px",
+  width: "150px",
   background: "#132136",
-  borderRadius: "9px",
+  borderRadius: "9px !important",
   border: "none !important",
   "& .MuiOutlinedInput-input": {
     color: "#6A7A93",
+    borderRadius: "9px",
   },
   "& .MuiInputLabel-root": {
     color: "#6A7A93",
+    borderRadius: "9px",
   },
   "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
     borderColor: "transparent",
+    borderRadius: "9px",
   },
   "&:hover .MuiOutlinedInput-input": {
     color: "#6A7A93",
+    borderRadius: "9px",
   },
   "&:hover .MuiInputLabel-root": {
     color: "#6A7A93",
+    borderRadius: "9px",
   },
   "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
     borderColor: "rgba(0, 0, 0, 0.2)",
@@ -90,9 +97,11 @@ const CustomInputField = styled(TextField)({
   },
   "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
     color: "#6A7A93",
+    borderRadius: "9px",
   },
   "& .MuiInputLabel-root.Mui-focused": {
     color: "#6A7A93",
+    borderRadius: "9px",
   },
   "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
     borderColor: "rgba(0, 0, 0, 0.2)",
@@ -171,7 +180,7 @@ const DetailWrapper = ({ alertsData, selectedAlert }) => {
   return (
     <Box sx={{ maxHeight: "calc( 100vh - 90px)", overflowY: "scroll" }}>
       <Box m={2}>
-        <Typography mb={1} sx={{ color: "#EDEDED" }}>
+        <Typography mb={1} sx={{ color: "#EDEDED", fontWeight:"500" }} variant="h5">
           Alert Details
         </Typography>
         <FullImageCard
@@ -190,7 +199,7 @@ const DetailWrapper = ({ alertsData, selectedAlert }) => {
             mb={1}
             sx={{ color: "#EDEDED" }}
           >
-            <Typography>Intruders Captured</Typography>
+            <Typography sx={{ color: "#EDEDED", fontWeight:"500" }} variant="h6">Intruders Captured</Typography>
             <Typography>
               {alertsData &&
                 alertsData[selectedAlert] &&
@@ -229,6 +238,7 @@ const FullImageCard = ({ alertsData, selectedAlert, index, setIndex }) => {
           alertsData[selectedAlert]["full"][index]
         }
         width="100%"
+        style={{marginBottom:"-5px", borderRadius:"9px"}}
       />
       <Box
         sx={{
@@ -237,6 +247,7 @@ const FullImageCard = ({ alertsData, selectedAlert, index, setIndex }) => {
           left: 0,
           height: "100%",
           width: "100%",
+          borderRadius:"9px",
           background:
             "linear-gradient(0deg, rgba(18, 23, 69, 0.75) 0%, rgba(36, 36, 36, 0.22) 40.41%, rgba(142, 142, 142, 0) 77.6%)",
         }}
@@ -257,8 +268,9 @@ const FullImageCard = ({ alertsData, selectedAlert, index, setIndex }) => {
             setIndex(index - 1);
           }}
           disabled={index === 0}
+          sx={{ml:1}}
         >
-          <ArrowBackIosIcon />
+          <ArrowBackIosIcon sx={{fontSize:"18px"}} />
         </IconButton>
         <Typography>
           {index + 1} /{" "}
@@ -267,11 +279,12 @@ const FullImageCard = ({ alertsData, selectedAlert, index, setIndex }) => {
             alertsData[selectedAlert]["cropped"].length}
         </Typography>
         <IconButton
+          sx={{mr:1}}
           onClick={() => {
             setIndex((index + 1) % alertsData[selectedAlert]["cropped"].length);
           }}
         >
-          <ArrowForwardIosIcon />
+          <ArrowForwardIosIcon sx={{fontSize:"18px"}} />
         </IconButton>
       </Box>
     </Box>
@@ -334,6 +347,11 @@ const IntrudersCard = ({ url, isSelected, onClick = () => {} }) => {
 const ListWrapper = ({ alertsData, setSelectedAlert, selectedAlert }) => {
   const [from, setFrom] = useState(null);
   const [to, setTo] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState("all");
+  const [menuList, setMenuList] = useState({"all":"All Cameras"});
+  const handleLocationChange = (event) => {
+    setSelectedLocation(event.target.value);
+  };
   return (
     <Box>
       <Box display="flex" flexWrap="wrap" alignItems="center" m={2}>
@@ -347,11 +365,23 @@ const ListWrapper = ({ alertsData, setSelectedAlert, selectedAlert }) => {
         <Box m={2} ml={0}>
           <CustomDatePicker label="Date - To" value={to} setValue={setTo} />
         </Box>
+        <Tooltip title="Disabled">
+        <Box m={2} ml={0}>
+        <CustomDropDown
+          Icon={LocationOnIcon}
+          value={selectedLocation}
+          handleChange={handleLocationChange}
+            menuList={menuList}
+            disabled
+        />
+        </Box>
+        </Tooltip>
         <Box flex={1} />
         <CustomOutlinedButton
-          text="filter"
+          text="Filter"
           size="small"
           StartIcon={FilterListIcon}
+          sx={{fontWeight:"400"}}
           disabled
         />
       </Box>
@@ -392,9 +422,9 @@ const AlertCard = ({ isSelected, data, onClick = () => {} }) => {
       <Box
         width="100%"
         position="relative"
-        sx={{ border: isSelected ? "3px solid #1170FF" : "none" }}
+        sx={{ border: isSelected ? "3px solid #1170FF" : "none", borderRadius:"9px", overflow:"hidden" }}
       >
-        <img src={data && data["thumbnail_url"]} width="100%" />
+        <img src={data && data["thumbnail_url"]} width="100%" style={{marginBottom:"-5px"}} />
         <Box
           position="absolute"
           height="100%"
@@ -422,12 +452,11 @@ const AlertCard = ({ isSelected, data, onClick = () => {} }) => {
           display="flex"
           justifyContent="space-between"
         >
-          <Typography ml={1}>Location: {data && data["location"]}</Typography>
-          <Typography mr={1}>Suspects: {data && data["suspects"]}</Typography>
+          <Typography ml={1} variant="body2">{data && data["location"]}</Typography>
+          <Typography mr={1} variant="body2">Suspects: {data && data["suspects"]}</Typography>
         </Box>
         <Box position="absolute" width="100%" top="10px">
-          <Typography ml={1}>
-            Date:{" "}
+          <Typography ml={1} variant="body2">
             {new Date().toLocaleDateString("en-US", {
               year: "numeric",
               month: "short",
@@ -449,6 +478,7 @@ const CustomDatePicker = ({ label, value, setValue }) => {
         maxDate={moment()}
         value={value}
         inputFormat="DD MMM YYYY"
+        sx={{borderRadius:"9px !important"}}
         onChange={(newValue) => {
           console.log(newValue);
           setValue(newValue);

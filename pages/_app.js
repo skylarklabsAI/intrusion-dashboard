@@ -93,8 +93,8 @@ export default function MyApp(props) {
                       justifyContent: "center",
                       height: "50px",
                       width: "50px",
-                      borderRadius: "50%",
-                      background: "#25293B",
+                      // borderRadius: "50%",
+                      // background: "#25293B",
                       zIndex: "9999",
                     }}
                   >
@@ -116,24 +116,7 @@ export default function MyApp(props) {
                     >
                       Intelligent Intrusion Detection System
                     </Typography>
-                    <Typography
-                      sx={{
-                        fontWeight: "500",
-                        fontSize: "0.75rem",
-                        lineHeight: "15px",
-                        color: "#FFFFFF",
-                      }}
-                    >
-                      {date.toLocaleDateString("en-US", {
-                        weekday: "short",
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "numeric",
-                        // second: "numeric"
-                      })}
-                    </Typography>
+                    
                   </Stack>
                 </Box>
               </Box>
@@ -160,14 +143,14 @@ export default function MyApp(props) {
               }}
             />
             <Box
-              p={2}
+              p={4}
               width="100%"
               height="100%"
               display="flex"
               justifyContent="center"
               flexDirection="column"
             >
-              <Typography variant="h3" sx={{ color: "white", zIndex: "99999" }}>
+              <Typography variant="h4" sx={{ color: "white", zIndex: "99999" }}>
                 Thanks for visiting Skylarklabs{" "}
                 <span style={{ color: "#6D7DB8" }}>
                   Intelligent Intrusion Detection Dashboard
@@ -175,7 +158,7 @@ export default function MyApp(props) {
               </Typography>
               <Typography
                 mt={3}
-                variant="h3"
+                variant="h4"
                 sx={{ color: "white", zIndex: "99999" }}
               >
                 For better experiance of the features and analytics we provide

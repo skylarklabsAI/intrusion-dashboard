@@ -69,6 +69,7 @@ const CameraSlider = ({
               <CameraCard
                 thumbnail={camera_obj["thumbnail_url"]}
                 label={camera_obj["name"]}
+                location={ locations[location]['name']}
                 height="150px"
                 onClick={() => {
                   setSelectedCamera(camera_obj);
