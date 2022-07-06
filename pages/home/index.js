@@ -109,14 +109,31 @@ const HomeScreen = () => {
   const [records, setRecords] = React.useState([]);
   const [openAlertDialog, setOpenAlertDialog] = React.useState(false);
   const [alertData, setAlertData] = React.useState({});
+  const [waiting, setWaiting] = React.useState(false);
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   const playNext = () => {
+    console.log("start");
+    if (openAlertDialog === true) {
+      setWaiting(true);
+      return;
+    }
     setSelectedCamera(cameraList[selectedCamera["camera_id"] % 4]);
+    console.log("done");
   };
 
-  // React.useEffect(() => {
-  //   setRecords([]);
-  // }, [selectedCamera]);
+  React.useEffect(() => {
+    if (!openAlertDialog && waiting) {
+      sleep(1000).then(() => {
+        setSelectedCamera(cameraList[selectedCamera["camera_id"] % 4]);
+        setWaiting(false);
+      });
+    }
+  }, [openAlertDialog]);
+
   return (
     <Box
       sx={{
