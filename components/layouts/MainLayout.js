@@ -180,7 +180,8 @@ const MainLayout = ({ children }) => {
                     display: "flex",
                     alignItems: "center",
                     height: "100%",
-                    // justifyContent: "center",
+                    width: "100%",
+                    justifyContent: "center",
                   }}
                 >
                   <Box
@@ -189,23 +190,36 @@ const MainLayout = ({ children }) => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      height: "50px",
-                      width: "50px",
-                      borderRadius: "50%",
-                      background: "#25293B",
-                      zIndex: "9999",
+                      // height: "50px",
+                      // width: "50px",
+                      // borderRadius: "50%",
+                      // background: "#25293B",
+                      // zIndex: "9999",
                     }}
                   >
                     <img
-                      src="images/logo_short_dark.png"
-                      width="30px"
-                      height="30px"
+                      src="images/new_logo_long.png"
+                      width="250px"
+                      // height="30px"
                     />
+                    
                   </Box>
-                  <Stack ml={2}>
+                  <Stack
+                   
+                    sx={{
+                      flex: 1,
+                      // backgroundColor: "#5050ee",
+                      // clipPath: "ellipse(93% 100% at 93% 100%)",
+                      // height: "90px",
+                    }}
+                  >
                     <Typography
+                     ml={-18}
                       variant="h5"
+                      component="body1"
+                      
                       sx={{
+                        textAlign: "center",
                         fontWeight: "600",
                         fontSize: "1.45rem",
                         lineHeight: "35px",
@@ -214,7 +228,7 @@ const MainLayout = ({ children }) => {
                     >
                       Intelligent Intrusion Detection System
                     </Typography>
-                    <Typography
+                    {/* <Typography
                       sx={{
                         fontWeight: "500",
                         fontSize: "0.75rem",
@@ -231,9 +245,9 @@ const MainLayout = ({ children }) => {
                         minute: "numeric",
                         // second: "numeric"
                       })}
-                    </Typography>
+                    </Typography> */}
+                    
                   </Stack>
-                  <Box flex={1} />
                   {!isFullScreen ? (
                     <IconButton
                       sx={{ mr: 2 }}
@@ -268,6 +282,8 @@ const MainLayout = ({ children }) => {
                       <FullscreenExitRoundedIcon />
                     </IconButton>
                   )}
+
+                 
                 </Box>
               </Box>
             </Toolbar>

@@ -11,13 +11,17 @@ import BlockIcon from "@mui/icons-material/Block";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useEffect, useState } from "react";
-import CustomOutlinedButton from "../../../components/CustomButton";
+import CustomOutlinedButton from "./CustomButton";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-const AlertDialog = ({ open, handleClose, alertData }) => {
+const AlertDialog = ({ open, handleClose, alertData = { image: "[]" } }) => {
   const [index, setIndex] = useState(0);
+  const [images, setImages] = useState([]);
   useEffect(() => {
     setIndex(0);
+    console.log(alertData);
+    console.log(JSON.parse(alertData["image"]));
+    setImages(JSON.parse(alertData["image"]));
   }, [alertData]);
   return (
     <Dialog
@@ -27,7 +31,7 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
         background: "rgba(9, 13, 21, 0.8)",
         borderRadius: "6px",
       }}
-      open={false}
+      open={open}
       onClose={() => {
         handleClose();
       }}
@@ -84,7 +88,7 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
                   sx={{ color: "#EDEDED" }}
                 >
                   <Typography>Intruders Captured</Typography>
-                  <Typography>{alertData && alertData["suspects"]}</Typography>
+                  <Typography>{images.length}</Typography>
                 </Box>
                 <Grid
                   container
@@ -92,21 +96,19 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
                   mt={1}
                   sx={{ height: "450px", overflowY: "scroll", pr: 1 }}
                 >
-                  {alertData &&
-                    alertData["cropped"] &&
-                    alertData["cropped"].map((url, pos) => {
-                      return (
-                        <IntrudersCard
-                          url={url}
-                          alertData={alertData}
-                          key={url}
-                          isSelected={index === pos}
-                          onClick={() => {
-                            setIndex(pos);
-                          }}
-                        />
-                      );
-                    })}
+                  {images.map((url, pos) => {
+                    return (
+                      <IntrudersCard
+                        url={url[1]}
+                        alertData={alertData}
+                        key={url}
+                        isSelected={index === pos}
+                        onClick={() => {
+                          setIndex(pos);
+                        }}
+                      />
+                    );
+                  })}
                 </Grid>
               </Box>
             </Box>
@@ -120,6 +122,7 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
                 alertData={alertData}
                 index={index}
                 setIndex={setIndex}
+                images={images}
               />
               <Box
                 mt={3}
@@ -208,11 +211,11 @@ const IntrudersCard = ({ url, alertData, isSelected, onClick = () => {} }) => {
               fontWeight: "400",
             }}
           >
-            {alertData["time"].getHours() +
+            {/* {alertData["time"].getHours() +
               ":" +
               alertData["time"].getMinutes() +
               ":" +
-              alertData["time"].getSeconds()}
+              alertData["time"].getSeconds()} */}
           </Typography>
         </Box>
       </Box>
@@ -220,11 +223,11 @@ const IntrudersCard = ({ url, alertData, isSelected, onClick = () => {} }) => {
   );
 };
 
-const FullImageCard = ({ alertData, index, setIndex }) => {
+const FullImageCard = ({ alertData, index, setIndex, images }) => {
   return (
     <Box position="relative">
       <img
-        src={alertData["full"][index]}
+        src={images[index][0]}
         width="100%"
         style={{ marginBottom: "-5px", borderRadius: "9px" }}
       />
@@ -262,12 +265,12 @@ const FullImageCard = ({ alertData, index, setIndex }) => {
           <ArrowBackIosIcon sx={{ fontSize: "18px" }} />
         </IconButton>
         <Typography>
-          {index + 1} / {alertData["full"].length}
+          {index + 1} / {images.length}
         </Typography>
         <IconButton
           sx={{ mr: 2 }}
           onClick={() => {
-            setIndex((index + 1) % alertData["full"].length);
+            setIndex((index + 1) % images.length);
           }}
         >
           <ArrowForwardIosIcon sx={{ fontSize: "18px" }} />

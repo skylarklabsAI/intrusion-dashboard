@@ -6,6 +6,7 @@ import {
   IconButton,
   Stack,
   Typography,
+  Slide,
 } from "@mui/material";
 import MainLayout from "../../components/layouts/MainLayout";
 import VideocamIcon from "@mui/icons-material/Videocam";
@@ -18,102 +19,120 @@ import GroupIcon from "@mui/icons-material/Group";
 import AlertDialog from "./components/AlertDialog";
 import DetailCard from "./components/DetailCard";
 import DummyPlayer from "../../components/DummyPlayer";
+import useAuth, { ProtectRoute } from "../../auth/authContext";
+import AddCameraModal from "./components/AddCameraModal";
+import dynamic from "next/dynamic";
+const Player =
+  // global?.window &&
+  dynamic(() => import("../../components/Player"), { ssr: false });
 
 const locations = {
-  1: {
-    name: "Parking Lot",
-    cameras: [
-      {
-        camera_id: 1,
-        name: "Front Cam LS 1",
-        url: "/2a.mp4",
-        thumbnail_url: "/images/parking_lot_thumbnail.png",
-      },
-    ],
-  },
-  2: {
-    name: "Backyard",
-    cameras: [
-      {
-        camera_id: 2,
-        name: "Cam HX 2",
-        url: "/1a.mp4",
-        thumbnail_url: "/images/house_entry_thumbnail.png",
-      },
-    ],
-  },
-  3: {
-    name: "Campus Exit",
-    cameras: [
-      {
-        camera_id: 3,
-        name: "Cam T 100",
-        url: "/3a.mp4",
-        thumbnail_url: "/images/house_exit_thumbnail.png",
-      },
-    ],
-  },
-  4: {
-    name: "Complex 4 - Region 2",
-    cameras: [
-      {
-        camera_id: 4,
-        name: "Cam G 141",
-        url: "/4a.mp4",
-        thumbnail_url: "/images/4a_thumbnail.png",
-      },
-    ],
-  },
+  // 1: {
+  //   name: "Parking Lot",
+  //   cameras: [
+  //     {
+  //       camera_id: 1,
+  //       name: "Front Cam LS 1",
+  //       url: "/2a.mp4",
+  //       thumbnail_url: "/images/parking_lot_thumbnail.png",
+  //     },
+  //   ],
+  // },
+  // 2: {
+  //   name: "Backyard",
+  //   cameras: [
+  //     {
+  //       camera_id: 2,
+  //       name: "Cam HX 2",
+  //       url: "/1a.mp4",
+  //       thumbnail_url: "/images/house_entry_thumbnail.png",
+  //     },
+  //   ],
+  // },
+  // 3: {
+  //   name: "Campus Exit",
+  //   cameras: [
+  //     {
+  //       camera_id: 3,
+  //       name: "Cam T 100",
+  //       url: "/3a.mp4",
+  //       thumbnail_url: "/images/house_exit_thumbnail.png",
+  //     },
+  //   ],
+  // },
+  // 4: {
+  //   name: "Complex 4 - Region 2",
+  //   cameras: [
+  //     {
+  //       camera_id: 4,
+  //       name: "Cam G 141",
+  //       url: "/4a.mp4",
+  //       thumbnail_url: "/images/4a_thumbnail.png",
+  //     },
+  //   ],
+  // },
 };
 
 const cameraList = [
-  {
-    camera_id: 1,
-    name: "Front Cam LS 1",
-    url: "/2a.mp4",
-    thumbnail_url: "/images/parking_lot_thumbnail.png",
-  },
-  {
-    camera_id: 2,
-    name: "Cam HX 2",
-    url: "/1a.mp4",
-    thumbnail_url: "/images/house_entry_thumbnail.png",
-  },
-  {
-    camera_id: 3,
-    name: "Cam T 100",
-    url: "/3a.mp4",
-    thumbnail_url: "/images/house_exit_thumbnail.png",
-  },
-  {
-    camera_id: 4,
-    name: "Cam G 141",
-    url: "/4a.mp4",
-    thumbnail_url: "/images/4a_thumbnail.png",
-  },
-];
-
-const recordList = [
   // {
-  //   location: "Lobby",
-  //   camera: "Lobby Cam 3",
-  //   time: "11:20 PM",
-  //   suspects: 2,
-  //   image_url: "images/thumbnail.png",
+  //   camera_id: 1,
+  //   name: "Front Cam LS 1",
+  //   url: "/2a.mp4",
+  //   thumbnail_url: "/images/parking_lot_thumbnail.png",
+  // },
+  // {
+  //   camera_id: 2,
+  //   name: "Cam HX 2",
+  //   url: "/1a.mp4",
+  //   thumbnail_url: "/images/house_entry_thumbnail.png",
+  // },
+  // {
+  //   camera_id: 3,
+  //   name: "Cam T 100",
+  //   url: "/3a.mp4",
+  //   thumbnail_url: "/images/house_exit_thumbnail.png",
+  // },
+  // {
+  //   camera_id: 4,
+  //   name: "Cam G 141",
+  //   url: "/4a.mp4",
+  //   thumbnail_url: "/images/4a_thumbnail.png",
   // },
 ];
 
 const HomeScreen = () => {
   const [selectedLocation, setSelectedLocation] = React.useState("all");
-  const [selectedCamera, setSelectedCamera] = React.useState(cameraList[0]);
+  const [selectedCamera, setSelectedCamera] = React.useState(null);
   const [records, setRecords] = React.useState([]);
   const [openAlertDialog, setOpenAlertDialog] = React.useState(false);
   const [alertData, setAlertData] = React.useState({});
   const [waiting, setWaiting] = React.useState(false);
+  const { fetch_cameras, cameraList, fetch_notifications } = useAuth();
 
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
+
+  React.useEffect(() => {
+    fetch_cameras();
+  }, []);
+
+  React.useEffect(() => {
+    if (!selectedCamera) return;
+    fetch_notifications({ camera_id: selectedCamera["camera_id"] })
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [selectedCamera]);
+
+  React.useEffect(() => {
+    if (cameraList.length !== 0) {
+      setSelectedCamera(cameraList[0]);
+    }
+  }, [cameraList]);
 
   const playNext = () => {
     console.log("start");
@@ -147,6 +166,7 @@ const HomeScreen = () => {
           item
           xs={12}
           md={8}
+          xl={9}
           sx={{
             borderRight: 1,
             borderColor: "rgba(57, 76, 104, 0.5)",
@@ -165,9 +185,10 @@ const HomeScreen = () => {
             alertData={alertData}
             setAlertData={setAlertData}
             playNext={playNext}
+            cameraList={cameraList}
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={4} xl={3}>
           <RecordsWrapper
             records={records}
             openAlertDialog={openAlertDialog}
@@ -181,8 +202,9 @@ const HomeScreen = () => {
   );
 };
 
-HomeScreen.Layout = MainLayout;
-export default HomeScreen;
+const ProtectedHomeScreen = ProtectRoute(HomeScreen);
+ProtectedHomeScreen.Layout = MainLayout;
+export default ProtectedHomeScreen;
 
 const RecordsWrapper = ({
   records,
@@ -237,6 +259,7 @@ const RecordContainer = ({
       <Box
         display="flex"
         flexWrap="wrap"
+        width="100%"
         maxHeight={"calc( 100vh - 140px )"}
         justifyContent="flex-start"
         alignItems="flex-start"
@@ -274,91 +297,202 @@ const LiveWrapper = ({
   alertData,
   setAlertData,
   playNext,
+  cameraList,
 }) => {
   const handleLocationChange = (event) => {
     setSelectedLocation(event.target.value);
   };
   const [menuList, setMenuList] = React.useState({});
+  const [openAddCameraModal, setOpenAddCameraModal] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     const temp = { all: "All Cameras" };
+
     // const flag = true;
-    Object.keys(locations).map((id) => {
-      temp[id] = locations[id]["name"];
-      // if (flag && locations[id]["cameras"].length) {
-      //   setSelectedCamera(locations[id]["cameras"][0]);
-      //   flag = false;
-      // }
-    });
+    // Object.keys(locations).map((id) => {
+    //   temp[id] = locations[id]["name"];
+    //   // if (flag && locations[id]["cameras"].length) {
+    //   //   setSelectedCamera(locations[id]["cameras"][0]);
+    //   //   flag = false;
+    //   // }
+    // });
     setMenuList(temp);
   }, []);
   return (
     <Box>
-      <Box sx={{ height: "calc( 100vh - 350px)" }} m={1}>
+      <Box
+        sx={{
+          height: open ? "calc( 100vh - 350px)" : "calc( 100vh - 160px)",
+          // height: "calc( 100vh - 350px)",
+          // "@media (max-height: 650px)": {
+          //   height: "calc( 100vh - 250px)",
+          // },
+          // "@media (max-height: 450px)": {
+          //   height: "calc( 100vh - 200px)",
+          // },
+        }}
+        m={1}
+      >
         <Box display="flex" alignItems="center">
+          <AddCameraModal
+            open={openAddCameraModal}
+            handleClose={() => {
+              setOpenAddCameraModal(false);
+            }}
+          />
           <VideocamIcon />
           <Typography
             ml={1}
             variant="h6"
             sx={{ color: "#EDEDED", fontWeight: "600" }}
           >
-            {selectedCamera ? selectedCamera["name"] : "Camera Name"}
+            {selectedCamera ? selectedCamera["label"] : "Camera Name"}
           </Typography>
         </Box>
         {/* live player */}
         <Box
           my={1}
-          width="100%"
+          // width="100%"
           height="calc( 100% - 45px)"
           display="flex"
           alignItems="center"
           justifyContent="center"
           sx={{ overflow: "hidden" }}
         >
-          <DummyPlayer
-            url={selectedCamera && selectedCamera["url"]}
-            records={records}
-            setRecords={setRecords}
-            selectedCamera={selectedCamera}
-            openAlertDialog={openAlertDialog}
-            setOpenAlertDialog={setOpenAlertDialog}
-            alertData={alertData}
-            setAlertData={setAlertData}
-            playNext={playNext}
-          />
+          {selectedCamera && selectedCamera["stream_url"] ? (
+            <Player
+              url={selectedCamera["stream_url"]}
+              key={selectedCamera["stream_url"]}
+            />
+          ) : (
+            <Box></Box>
+          )}
         </Box>
       </Box>
       <Divider />
-      <Box sx={{ height: "225px" }} m={1}>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Box display="flex">
-            <LinkedCameraIcon />{" "}
-            <Typography
-              ml={1}
-              variant="h5"
-              sx={{ color: "#EDEDED", fontWeight: "600" }}
+      {open ? (
+        <div
+          onMouseLeave={() => {
+            setOpen(false);
+          }}
+        >
+          <Slide direction="up" in={open} mountOnEnter unmountOnExit>
+            <Box
+              sx={{
+                height: "225px",
+
+                // transitionTimingFunction: "linear;",
+                // transition: "height 2s;",
+                // "@media (max-height: 650px)": {
+                //   height: "125px",
+                // },
+                // "@media (max-height: 50px)": {
+                //   height: "125px",
+                // },
+              }}
+              m={1}
             >
-              Cameras
-            </Typography>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Box display="flex">
+                  <LinkedCameraIcon />{" "}
+                  <Typography
+                    ml={1}
+                    variant="h5"
+                    sx={{ color: "#EDEDED", fontWeight: "600" }}
+                  >
+                    Cameras
+                  </Typography>
+                </Box>
+                <Box display="flex">
+                  <CustomDropDown
+                    Icon={LocationOnIcon}
+                    value={selectedLocation}
+                    handleChange={handleLocationChange}
+                    menuList={menuList}
+                  />
+                  <IconButton
+                    sx={{ ml: 1 }}
+                    onClick={() => {
+                      setOpenAddCameraModal(true);
+                    }}
+                  >
+                    <AddIcon />
+                  </IconButton>
+                </Box>
+              </Box>
+
+              <CameraSlider
+                locations={locations}
+                selectedLocation={selectedLocation}
+                selectedCamera={selectedCamera}
+                setSelectedCamera={setSelectedCamera}
+                cameraList={cameraList}
+              />
+            </Box>
+          </Slide>
+        </div>
+      ) : (
+        <div
+          onMouseEnter={() => {
+            setOpen(true);
+          }}
+        >
+          {/* <Slide direction="up" in={true} mountOnEnter unmountOnExit> */}
+          <Box
+            sx={{
+              height: "35px",
+
+              // transitionTimingFunction: "linear;",
+              // transition: "height 2s;",
+              // "@media (max-height: 650px)": {
+              //   height: "125px",
+              // },
+              // "@media (max-height: 50px)": {
+              //   height: "125px",
+              // },
+            }}
+            m={1}
+          >
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Box display="flex">
+                <LinkedCameraIcon />{" "}
+                <Typography
+                  ml={1}
+                  variant="h5"
+                  sx={{ color: "#EDEDED", fontWeight: "600" }}
+                >
+                  Cameras
+                </Typography>
+              </Box>
+              <Box display="flex">
+                <CustomDropDown
+                  Icon={LocationOnIcon}
+                  value={selectedLocation}
+                  handleChange={handleLocationChange}
+                  menuList={menuList}
+                />
+                <IconButton
+                  sx={{ ml: 1 }}
+                  onClick={() => {
+                    setOpenAddCameraModal(true);
+                  }}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Box>
+            </Box>
           </Box>
-          <Box display="flex">
-            <CustomDropDown
-              Icon={LocationOnIcon}
-              value={selectedLocation}
-              handleChange={handleLocationChange}
-              menuList={menuList}
-            />
-            <IconButton sx={{ ml: 1 }}>
-              <AddIcon />
-            </IconButton>
-          </Box>
-        </Box>
-        <CameraSlider
-          locations={locations}
-          selectedLocation={selectedLocation}
-          selectedCamera={selectedCamera}
-          setSelectedCamera={setSelectedCamera}
-        />
-      </Box>
+          {/* </Slide> */}
+        </div>
+      )}
     </Box>
   );
 };

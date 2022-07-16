@@ -34,9 +34,9 @@ const Player = (props) => {
         src={url}
         autoPlay={true}
         // controls={true}
-        width="100%"
-        height="auto"
-        style={{ borderRadius: "20px" }}
+        width="auto"
+        height="100%"
+        style={{ borderRadius: "9px" }}
         hlsConfig={{
           // autoStartLoad: true,
           // // enableWorker: true,
