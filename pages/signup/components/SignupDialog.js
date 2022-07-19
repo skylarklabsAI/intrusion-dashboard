@@ -165,6 +165,8 @@ const SignupDialog = ({ open = true, handleClose = () => {} }) => {
         setIsLoading(false);
       })
       .catch((err) => {
+        toast.error("Failed to create Account")
+        toast.error(err.response['data']['non_field_errors'][0])
         console.log(err.response);
         setIsLoading(false);
       });
