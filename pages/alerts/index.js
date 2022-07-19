@@ -161,10 +161,12 @@ const AlertsPage = () => {
             height: "calc( 100vh - 90px)",
           }}
         >
-          {alertsData.length !==0 && <DetailWrapper
-            alertsData={alertsData}
-            selectedAlert={selectedAlert}
-          />}
+          {alertsData.length !== 0 && (
+            <DetailWrapper
+              alertsData={alertsData}
+              selectedAlert={selectedAlert}
+            />
+          )}
         </Grid>
       </Grid>
     </Box>
@@ -378,11 +380,19 @@ const ListWrapper = ({
   const [to, setTo] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [menuList, setMenuList] = useState({ all: "All Cameras" });
-  const { fetch_notifications, fetch_cameras, cameraList } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [nextLink, setNextLink] = useState(null);
+  const {
+    fetch_notifications,
+    fetch_cameras,
+    cameraList,
+    fetch_next_notifications,
+  } = useAuth();
   useEffect(() => {
     fetch_cameras();
     handleFetchNotifications();
   }, []);
+
   useEffect(() => {
     const temp = { all: "All Cameras" };
     cameraList.map((camera) => {
@@ -390,6 +400,22 @@ const ListWrapper = ({
     });
     setMenuList(temp);
   }, [cameraList]);
+
+  const handleFetchNextNotifications = () => {
+    if (!nextLink) return;
+    setLoading(true);
+    fetch_next_notifications(nextLink)
+      .then((res) => {
+        console.log(res);
+        setNextLink(res.data.next);
+        setAlertsData([...alertsData, ...res.data.results]);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
 
   const handleFetchNotifications = () => {
     const url = "?limit=40";
@@ -400,6 +426,7 @@ const ListWrapper = ({
     if (selectedLocation !== "all") url += `&camera_id=${selectedLocation}`;
     fetch_notifications(url)
       .then((res) => {
+        setNextLink(res.data.next);
         console.log(res.data.results);
         setAlertsData(res.data.results);
         setSelectedAlert(0);
@@ -407,6 +434,15 @@ const ListWrapper = ({
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const handleScroll = (e) => {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+    if (bottom) {
+      console.log("reached bottom");
+      handleFetchNextNotifications();
+    }
   };
 
   const handleLocationChange = (event) => {
@@ -452,6 +488,7 @@ const ListWrapper = ({
         spacing={2}
         p={2}
         sx={{ maxHeight: "calc( 100vh - 180px)", overflowY: "scroll" }}
+        onScroll={handleScroll}
       >
         {alertsData.map((data, pos) => {
           return (

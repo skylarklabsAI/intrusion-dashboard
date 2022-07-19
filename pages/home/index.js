@@ -144,6 +144,8 @@ const HomeScreen = () => {
   React.useEffect(() => {
     if (cameraList.length !== 0) {
       setSelectedCamera(cameraList[0]);
+    } else {
+      setSelectedCamera(null);
     }
   }, [cameraList]);
 

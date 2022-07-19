@@ -210,6 +210,10 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
+  const fetch_next_notifications = (url = "") => {
+    return api.get(`${url}`);
+  };
+
   const notification_resolve = (id) => {
     return api.put(`http://65.2.145.64:8000/notifications/resolve/${id}/`);
   };
@@ -234,6 +238,7 @@ export const AuthProvider = ({ children }) => {
         fetch_camera_services,
         fetch_camera_by_id,
         fetch_notifications,
+        fetch_next_notifications,
         notification_resolve,
         notification_unresolve,
       }}

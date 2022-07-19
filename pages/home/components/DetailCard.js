@@ -46,7 +46,7 @@ const DetailCard = ({ record, onClick = () => {} }) => {
         }}
       >
         <img
-          src={record && record["notification_images"] &&  record["notification_images"][0]["original_image"]}
+          src={record && record["notification_images"] && record["notification_images"][0] && record["notification_images"][0]["original_image"]}
           // src="/images/thumbnail.png"
           height="100%"
           width="100%"
