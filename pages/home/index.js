@@ -117,15 +117,28 @@ const HomeScreen = () => {
     fetch_cameras();
   }, []);
 
-  React.useEffect(() => {
-    if (!selectedCamera) return;
-    fetch_notifications({ camera_id: selectedCamera["camera_id"] })
+  let alertsinterval;
+
+  const handleFetchNotifications = () => {
+    fetch_notifications("?limit=40")
       .then((res) => {
         console.log(res.data);
+        setRecords(res.data.results);
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  React.useEffect(() => {
+    if (!selectedCamera) return;
+    handleFetchNotifications();
+    alertsinterval = setInterval(() => {
+      handleFetchNotifications();
+    }, 5000);
+    return () => {
+      clearInterval(alertsinterval);
+    };
   }, [selectedCamera]);
 
   React.useEffect(() => {
@@ -191,6 +204,7 @@ const HomeScreen = () => {
         <Grid item xs={12} md={4} xl={3}>
           <RecordsWrapper
             records={records}
+            setRecords={setRecords}
             openAlertDialog={openAlertDialog}
             setOpenAlertDialog={setOpenAlertDialog}
             alertData={alertData}
@@ -212,6 +226,7 @@ const RecordsWrapper = ({
   setOpenAlertDialog,
   alertData,
   setAlertData,
+  setRecords,
 }) => {
   return (
     <Box>
@@ -223,6 +238,7 @@ const RecordsWrapper = ({
         setOpenAlertDialog={setOpenAlertDialog}
         alertData={alertData}
         setAlertData={setAlertData}
+        setRecords={setRecords}
       />
     </Box>
   );
@@ -236,7 +252,9 @@ const RecordContainer = ({
   setOpenAlertDialog,
   alertData,
   setAlertData,
+  setRecords,
 }) => {
+  const { notification_resolve, notification_unresolve } = useAuth();
   return (
     <Box>
       <AlertDialog
@@ -245,6 +263,39 @@ const RecordContainer = ({
           setOpenAlertDialog(false);
         }}
         alertData={alertData}
+        onResponding={() => {
+          notification_resolve(alertData["id"])
+            .then((res) => {
+              console.log(res);
+              const tempList = records.map((item) => {
+                if (item["id"] === alertData["id"]) {
+                  item["isresolved"] = true;
+                }
+                return item;
+              });
+              setRecords(tempList);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }}
+        onRevert={() => {
+          notification_unresolve(alertData["id"])
+            .then((res) => {
+              console.log(res);
+              const tempList = records.map((item) => {
+                if (item["id"] === alertData["id"]) {
+                  item["isresolved"] = false;
+                }
+                return item;
+              });
+              console.log(tempList);
+              setRecords(tempList);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }}
       />
       <Box display="flex" alignItems="center" m={1}>
         <Icon />
@@ -272,6 +323,7 @@ const RecordContainer = ({
               key={val}
               record={obj}
               onClick={() => {
+                console.log("hello");
                 setAlertData(obj);
                 setOpenAlertDialog(true);
               }}

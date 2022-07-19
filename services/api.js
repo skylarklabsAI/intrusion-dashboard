@@ -58,8 +58,8 @@ instance.interceptors.response.use(
           return instance(originalConfig);
         } catch (_error) {
           console.log("error block");
-          // TokenService.removeUser();
-          // window.location.pathname = loginPagePath;
+          TokenService.removeUser();
+          window.location.pathname = loginPagePath;
           return Promise.reject(_error);
         }
       }

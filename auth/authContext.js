@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cameraList, setCameraList] = React.useState([]);
+
   useEffect(() => {
     if (loading == true) {
       setUser(JSON.parse(localStorage.getItem("user")));
@@ -203,12 +204,18 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
-  const fetch_notifications = (data = {}) => {
-    console.log(data);
-    return api.post(
-      "http://65.2.145.64:8000/notifications/notifications/get-notification/",
-      data
+  const fetch_notifications = (url = "") => {
+    return api.get(
+      `http://65.2.145.64:8000/notifications/getnotification/${url}`
     );
+  };
+
+  const notification_resolve = (id) => {
+    return api.put(`http://65.2.145.64:8000/notifications/resolve/${id}/`);
+  };
+
+  const notification_unresolve = (id) => {
+    return api.put(`http://65.2.145.64:8000/notifications/unresolve/${id}/`);
   };
 
   return (
@@ -227,6 +234,8 @@ export const AuthProvider = ({ children }) => {
         fetch_camera_services,
         fetch_camera_by_id,
         fetch_notifications,
+        notification_resolve,
+        notification_unresolve,
       }}
     >
       {children}

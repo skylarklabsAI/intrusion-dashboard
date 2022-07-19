@@ -2,6 +2,7 @@ import * as React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import moment from "moment";
 
 const DetailCard = ({ record, onClick = () => {} }) => {
   return (
@@ -45,7 +46,7 @@ const DetailCard = ({ record, onClick = () => {} }) => {
         }}
       >
         <img
-          src={record && record["full"][0]}
+          src={record && record["notification_images"] &&  record["notification_images"][0]["original_image"]}
           // src="/images/thumbnail.png"
           height="100%"
           width="100%"
@@ -68,7 +69,7 @@ const DetailCard = ({ record, onClick = () => {} }) => {
         }}
       >
         <Stack sx={{ flex: 1 }}>
-          <Field title="Location" subtitle={record && record["location"]} />
+          <Field title="Location" subtitle={"Region - 1"} />
           <Field
             title="Camera"
             subtitle={record && record["camera"] ? record["camera"] : "-"}
@@ -76,12 +77,17 @@ const DetailCard = ({ record, onClick = () => {} }) => {
           <Field
             title="Time"
             subtitle={
-              record && record["time"]
-                ? record["time"].getHours() + ":" + record["time"].getMinutes()
+              record && record["created_on"]
+                ? moment(record["created_on"]).hour() +
+                  ":" +
+                  moment(record["created_on"]).minute()
                 : "-"
             }
           />
-          <Field title="Suspects" subtitle={record && record["suspects"]} />
+          <Field
+            title="Suspects"
+            subtitle={record && record["notification_images"].length}
+          />
         </Stack>
       </Box>
       {/* <Box sx={{ position: "absolute", bottom: "10px", right: "10px" }}>
@@ -95,7 +101,7 @@ const DetailCard = ({ record, onClick = () => {} }) => {
         <FiberManualRecordIcon
           sx={{
             fontSize: "20px",
-            color: "#FF2950",
+            color: record && record["isresolved"] ? "#49FF71" : "#FF2950",
           }}
         />
       </Box>

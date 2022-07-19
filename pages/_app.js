@@ -17,7 +17,8 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { gettoken, onMessageListener } from "../utils/webPush";
+// import { gettoken, onMessageListener } from "../utils/webPush";
+import { firebaseCloudMessaging, onMessageListener } from "../utils/webPush";
 import AlertDialog from "../components/AlertDialog";
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -26,11 +27,27 @@ const clientSideEmotionCache = createEmotionCache();
 export default function MyApp(props) {
   const [date, setDate] = React.useState(new Date());
   const [openAlertDialog, setOpenAlertDialog] = React.useState(false);
-  const [alertData, setAlertData] = React.useState({image:"[[]]"});
+  const [alertData, setAlertData] = React.useState({ image: "[[]]" });
+  const [user, setUser] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    if (loading == true) {
+      setUser(JSON.parse(localStorage.getItem("user")));
+      setLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (loading) return;
+    if (!user) return;
+    firebaseCloudMessaging.init();
+  }, [loading, user]);
 
   React.useEffect(() => {
     // requestPermission();
-    gettoken();
+    // gettoken();
+    // firebaseCloudMessaging.init();
     setInterval(() => {
       setDate(new Date());
     }, 30000);
@@ -39,9 +56,11 @@ export default function MyApp(props) {
   onMessageListener()
     .then((payload) => {
       console.log("received foreground message");
-      console.log(payload);
-      setAlertData(payload["data"]);
-      setOpenAlertDialog(true);
+      if (user) {
+        console.log(payload);
+        setAlertData(payload["data"]);
+        setOpenAlertDialog(true);
+      }
     })
     .catch((err) => console.log("failed: ", err));
 

@@ -13,8 +13,15 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useEffect, useState } from "react";
 import CustomOutlinedButton from "../../../components/CustomButton";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import moment from "moment";
 
-const AlertDialog = ({ open, handleClose, alertData }) => {
+const AlertDialog = ({
+  open,
+  handleClose,
+  alertData,
+  onResponding = () => {},
+  onRevert = () => {},
+}) => {
   const [index, setIndex] = useState(0);
   useEffect(() => {
     setIndex(0);
@@ -27,7 +34,7 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
         background: "rgba(9, 13, 21, 0.8)",
         borderRadius: "6px",
       }}
-      open={false}
+      open={open}
       onClose={() => {
         handleClose();
       }}
@@ -93,13 +100,13 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
                   sx={{ height: "450px", overflowY: "scroll", pr: 1 }}
                 >
                   {alertData &&
-                    alertData["cropped"] &&
-                    alertData["cropped"].map((url, pos) => {
+                    alertData["notification_images"] &&
+                    alertData["notification_images"].map((data, pos) => {
                       return (
                         <IntrudersCard
-                          url={url}
-                          alertData={alertData}
-                          key={url}
+                          url={data["cropped_image"]}
+                          alertData={data}
+                          key={data["cropped_image"]}
                           isSelected={index === pos}
                           onClick={() => {
                             setIndex(pos);
@@ -128,20 +135,42 @@ const AlertDialog = ({ open, handleClose, alertData }) => {
                 alignItems="center"
                 justifyContent="space-around"
               >
+                {alertData && alertData["isresolved"] === true ? (
+                  <CustomOutlinedButton
+                    text="Mark As Not Resolved"
+                    StartIcon={CancelIcon}
+                    sx={{ fontWeight: "400", background: "#202F46" }}
+                    onClick={() => {
+                      onRevert();
+                      handleClose();
+                    }}
+                  />
+                ) : (
+                  <CustomOutlinedButton
+                    text="Mark As Resolved"
+                    StartIcon={CheckCircleIcon}
+                    sx={{ fontWeight: "400", background: "#2EAB60" }}
+                    onClick={() => {
+                      onResponding();
+                      handleClose();
+                    }}
+                  />
+                )}
+
                 <CustomOutlinedButton
-                  text="Responded"
-                  StartIcon={CheckCircleIcon}
-                  sx={{ fontWeight: "400" }}
-                  onClick={() => {
-                    handleClose();
-                  }}
-                />
-                <CustomOutlinedButton
-                  text="Respond Later"
+                  text={
+                    alertData && alertData["resolved"]
+                      ? "Close"
+                      : "Respond Later"
+                  }
                   sx={{
                     fontWeight: "400",
-                    background: "#202F46",
+                    background:
+                      alertData && alertData["resolved"]
+                        ? "#202F46"
+                        : "#D33A3A",
                     borderTop: "1.5px solid #3C5170",
+                    width: "200px",
                   }}
                   onClick={() => {
                     handleClose();
@@ -208,11 +237,11 @@ const IntrudersCard = ({ url, alertData, isSelected, onClick = () => {} }) => {
               fontWeight: "400",
             }}
           >
-            {alertData["time"].getHours() +
+            {moment(alertData["created_on"]).hour() +
               ":" +
-              alertData["time"].getMinutes() +
+              moment(alertData["created_on"]).minutes() +
               ":" +
-              alertData["time"].getSeconds()}
+              moment(alertData["created_on"]).seconds()}
           </Typography>
         </Box>
       </Box>
@@ -224,7 +253,7 @@ const FullImageCard = ({ alertData, index, setIndex }) => {
   return (
     <Box position="relative">
       <img
-        src={alertData["full"][index]}
+        src={alertData && alertData["notification_images"] && alertData["notification_images"][index] && alertData["notification_images"][index]["original_image"]}
         width="100%"
         style={{ marginBottom: "-5px", borderRadius: "9px" }}
       />
@@ -262,12 +291,12 @@ const FullImageCard = ({ alertData, index, setIndex }) => {
           <ArrowBackIosIcon sx={{ fontSize: "18px" }} />
         </IconButton>
         <Typography>
-          {index + 1} / {alertData["full"].length}
+          {index + 1} / {alertData["notification_images"].length}
         </Typography>
         <IconButton
           sx={{ mr: 2 }}
           onClick={() => {
-            setIndex((index + 1) % alertData["full"].length);
+            setIndex((index + 1) % alertData["notification_images"].length);
           }}
         >
           <ArrowForwardIosIcon sx={{ fontSize: "18px" }} />

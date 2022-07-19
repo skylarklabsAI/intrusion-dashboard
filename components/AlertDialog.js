@@ -13,10 +13,12 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useEffect, useState } from "react";
 import CustomOutlinedButton from "./CustomButton";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import useAuth from "../auth/authContext";
 
 const AlertDialog = ({ open, handleClose, alertData = { image: "[]" } }) => {
   const [index, setIndex] = useState(0);
   const [images, setImages] = useState([]);
+  const { notification_resolve } = useAuth();
   useEffect(() => {
     setIndex(0);
     console.log(alertData);
@@ -136,6 +138,13 @@ const AlertDialog = ({ open, handleClose, alertData = { image: "[]" } }) => {
                   StartIcon={CheckCircleIcon}
                   sx={{ fontWeight: "400" }}
                   onClick={() => {
+                    notification_resolve(alertData["id"])
+                      .then((res) => {
+                        console.log(res);
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
                     handleClose();
                   }}
                 />
