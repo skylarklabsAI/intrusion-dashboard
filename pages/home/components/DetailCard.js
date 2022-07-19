@@ -46,7 +46,12 @@ const DetailCard = ({ record, onClick = () => {} }) => {
         }}
       >
         <img
-          src={record && record["notification_images"] && record["notification_images"][0] && record["notification_images"][0]["original_image"]}
+          src={
+            record &&
+            record["notification_images"] &&
+            record["notification_images"][0] &&
+            record["notification_images"][0]["original_image"]
+          }
           // src="/images/thumbnail.png"
           height="100%"
           width="100%"
@@ -69,10 +74,12 @@ const DetailCard = ({ record, onClick = () => {} }) => {
         }}
       >
         <Stack sx={{ flex: 1 }}>
-          <Field title="Location" subtitle={"Region - 1"} />
+          <Field title="Location" subtitle={"-"} />
           <Field
             title="Camera"
-            subtitle={record && record["camera"] ? record["camera"] : "-"}
+            subtitle={
+              record && record["camera_label"]
+            }
           />
           <Field
             title="Time"

@@ -563,7 +563,7 @@ const AlertCard = ({ isSelected, data, onClick = () => {} }) => {
           justifyContent="space-between"
         >
           <Typography ml={1} variant="body2">
-            {"Region - 1"}
+            {data && data["camera_label"]}
           </Typography>
           <Typography mr={1} variant="body2">
             Suspects:{" "}

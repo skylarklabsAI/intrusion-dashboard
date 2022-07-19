@@ -222,6 +222,11 @@ export const AuthProvider = ({ children }) => {
     return api.put(`http://65.2.145.64:8000/notifications/unresolve/${id}/`);
   };
 
+  const logout = () => {
+    TokenService.removeUser();
+    window.location.pathname = '/login';
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -241,6 +246,7 @@ export const AuthProvider = ({ children }) => {
         fetch_next_notifications,
         notification_resolve,
         notification_unresolve,
+        logout,
       }}
     >
       {children}

@@ -131,7 +131,7 @@ const HomeScreen = () => {
   };
 
   React.useEffect(() => {
-    if (!selectedCamera) return;
+    // if (!selectedCamera) return;
     handleFetchNotifications();
     alertsinterval = setInterval(() => {
       handleFetchNotifications();

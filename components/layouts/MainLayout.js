@@ -348,7 +348,7 @@ const MainLayout = ({ children }) => {
                 />
               </MuiNextLink> */}
             </Box>
-            {/* <DrawerFooter /> */}
+            <DrawerFooter />
           </Drawer>
           <Box
             sx={{
@@ -469,14 +469,15 @@ const CustomListItem = ({
 };
 
 const DrawerFooter = () => {
+  const {logout} = useAuth()
   return (
     <Box
       sx={{
         position: "fixed",
         bottom: "10px",
-        width: drawerWidth,
+        width: "64px",
         marginTop: 1,
-        background: "#F4F4F4",
+        background: "#040D18",
       }}
     >
       <Box
@@ -487,13 +488,13 @@ const DrawerFooter = () => {
           marginTop: 1,
         }}
       >
-        <MuiNextLink href="/admin">
-          <Tooltip title={"Admin Controls"} placement="right">
-            <IconButton sx={{ color: "white" }}>
-              <AdminPanelSettingsIcon sx={{ color: "#8ED483" }} />
+        
+          <Tooltip title={"Logout"} placement="right">
+            <IconButton sx={{ color: "white" }} onClick={()=>{logout()}}>
+              <LogoutIcon sx={{ color: "#8ED483" }} />
             </IconButton>
           </Tooltip>
-        </MuiNextLink>
+       
       </Box>
     </Box>
   );
