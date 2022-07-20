@@ -22,6 +22,10 @@ import DummyPlayer from "../../components/DummyPlayer";
 import useAuth, { ProtectRoute } from "../../auth/authContext";
 import AddCameraModal from "./components/AddCameraModal";
 import dynamic from "next/dynamic";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import FullscreenExitRoundedIcon from "@mui/icons-material/FullscreenExitRounded";
+import Grid3x3Icon from "@mui/icons-material/Grid3x3";
+import GridView from "./components/GridView";
 const Player =
   // global?.window &&
   dynamic(() => import("../../components/Player"), { ssr: false });
@@ -359,6 +363,8 @@ const LiveWrapper = ({
   const [menuList, setMenuList] = React.useState({});
   const [openAddCameraModal, setOpenAddCameraModal] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const handle = useFullScreenHandle();
+  const [isGridView, setIsGridView] = React.useState(false);
   React.useEffect(() => {
     const temp = { all: "All Cameras" };
 
@@ -374,178 +380,195 @@ const LiveWrapper = ({
   }, []);
   return (
     <Box>
-      <Box
-        sx={{
-          height: open ? "calc( 100vh - 350px)" : "calc( 100vh - 160px)",
-          // height: "calc( 100vh - 350px)",
-          // "@media (max-height: 650px)": {
-          //   height: "calc( 100vh - 250px)",
-          // },
-          // "@media (max-height: 450px)": {
-          //   height: "calc( 100vh - 200px)",
-          // },
-        }}
-        m={1}
-      >
-        <Box display="flex" alignItems="center">
-          <AddCameraModal
-            open={openAddCameraModal}
-            handleClose={() => {
-              setOpenAddCameraModal(false);
-            }}
-          />
-          <VideocamIcon />
-          <Typography
-            ml={1}
-            variant="h6"
-            sx={{ color: "#EDEDED", fontWeight: "600" }}
-          >
-            {selectedCamera ? selectedCamera["label"] : "Camera Name"}
-          </Typography>
-        </Box>
-        {/* live player */}
-        <Box
-          my={1}
-          // width="100%"
-          height="calc( 100% - 45px)"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ overflow: "hidden" }}
-        >
-          {selectedCamera && selectedCamera["stream_url"] ? (
-            <Player
-              url={selectedCamera["stream_url"]}
-              key={selectedCamera["stream_url"]}
-            />
-          ) : (
-            <Box></Box>
-          )}
-        </Box>
-      </Box>
-      <Divider />
-      {open ? (
-        <div
-          onMouseLeave={() => {
-            setOpen(false);
-          }}
-        >
-          <Slide direction="up" in={open} mountOnEnter unmountOnExit>
-            <Box
-              sx={{
-                height: "225px",
-
-                // transitionTimingFunction: "linear;",
-                // transition: "height 2s;",
-                // "@media (max-height: 650px)": {
-                //   height: "125px",
-                // },
-                // "@media (max-height: 50px)": {
-                //   height: "125px",
-                // },
-              }}
-              m={1}
-            >
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <Box display="flex">
-                  <LinkedCameraIcon />{" "}
-                  <Typography
-                    ml={1}
-                    variant="h5"
-                    sx={{ color: "#EDEDED", fontWeight: "600" }}
-                  >
-                    Cameras
-                  </Typography>
-                </Box>
-                <Box display="flex">
-                  <CustomDropDown
-                    Icon={LocationOnIcon}
-                    value={selectedLocation}
-                    handleChange={handleLocationChange}
-                    menuList={menuList}
-                  />
-                  <IconButton
-                    sx={{ ml: 1 }}
-                    onClick={() => {
-                      setOpenAddCameraModal(true);
-                    }}
-                  >
-                    <AddIcon />
-                  </IconButton>
-                </Box>
-              </Box>
-
-              <CameraSlider
-                locations={locations}
-                selectedLocation={selectedLocation}
-                selectedCamera={selectedCamera}
-                setSelectedCamera={setSelectedCamera}
-                cameraList={cameraList}
-              />
-            </Box>
-          </Slide>
-        </div>
-      ) : (
-        <div
-          onMouseEnter={() => {
-            setOpen(true);
-          }}
-        >
-          {/* <Slide direction="up" in={true} mountOnEnter unmountOnExit> */}
+      {!isGridView ? (
+        <Box>
           <Box
             sx={{
-              height: "35px",
-
-              // transitionTimingFunction: "linear;",
-              // transition: "height 2s;",
+              height: open ? "calc( 100vh - 350px)" : "calc( 100vh - 160px)",
+              // height: "calc( 100vh - 350px)",
               // "@media (max-height: 650px)": {
-              //   height: "125px",
+              //   height: "calc( 100vh - 250px)",
               // },
-              // "@media (max-height: 50px)": {
-              //   height: "125px",
+              // "@media (max-height: 450px)": {
+              //   height: "calc( 100vh - 200px)",
               // },
             }}
             m={1}
           >
+            <Box display="flex" alignItems="center">
+              <AddCameraModal
+                open={openAddCameraModal}
+                handleClose={() => {
+                  setOpenAddCameraModal(false);
+                }}
+              />
+              <VideocamIcon />
+              <Typography
+                ml={1}
+                variant="h6"
+                sx={{ color: "#EDEDED", fontWeight: "600" }}
+              >
+                {selectedCamera ? selectedCamera["label"] : "Camera Name"}
+              </Typography>
+              <Box flex={1} />
+              <Typography>Grid View</Typography>
+              <IconButton
+                onClick={() => {
+                  setIsGridView(true);
+                }}
+              >
+                <Grid3x3Icon />
+              </IconButton>
+            </Box>
+            {/* live player */}
             <Box
+              my={1}
+              // width="100%"
+              height="calc( 100% - 45px)"
               display="flex"
               alignItems="center"
-              justifyContent="space-between"
+              justifyContent="center"
+              sx={{ overflow: "hidden" }}
             >
-              <Box display="flex">
-                <LinkedCameraIcon />{" "}
-                <Typography
-                  ml={1}
-                  variant="h5"
-                  sx={{ color: "#EDEDED", fontWeight: "600" }}
-                >
-                  Cameras
-                </Typography>
-              </Box>
-              <Box display="flex">
-                <CustomDropDown
-                  Icon={LocationOnIcon}
-                  value={selectedLocation}
-                  handleChange={handleLocationChange}
-                  menuList={menuList}
+              {selectedCamera && selectedCamera["stream_url"] ? (
+                <Player
+                  url={selectedCamera["stream_url"]}
+                  key={selectedCamera["stream_url"]}
                 />
-                <IconButton
-                  sx={{ ml: 1 }}
-                  onClick={() => {
-                    setOpenAddCameraModal(true);
-                  }}
-                >
-                  <AddIcon />
-                </IconButton>
-              </Box>
+              ) : (
+                <Box></Box>
+              )}
             </Box>
           </Box>
-          {/* </Slide> */}
-        </div>
+          <Divider />
+          {open ? (
+            <div
+              onMouseLeave={() => {
+                setOpen(false);
+              }}
+            >
+              <Slide direction="up" in={open} mountOnEnter unmountOnExit>
+                <Box
+                  sx={{
+                    height: "225px",
+
+                    // transitionTimingFunction: "linear;",
+                    // transition: "height 2s;",
+                    // "@media (max-height: 650px)": {
+                    //   height: "125px",
+                    // },
+                    // "@media (max-height: 50px)": {
+                    //   height: "125px",
+                    // },
+                  }}
+                  m={1}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Box display="flex">
+                      <LinkedCameraIcon />{" "}
+                      <Typography
+                        ml={1}
+                        variant="h5"
+                        sx={{ color: "#EDEDED", fontWeight: "600" }}
+                      >
+                        Cameras
+                      </Typography>
+                    </Box>
+                    <Box display="flex">
+                      <CustomDropDown
+                        Icon={LocationOnIcon}
+                        value={selectedLocation}
+                        handleChange={handleLocationChange}
+                        menuList={menuList}
+                      />
+                      <IconButton
+                        sx={{ ml: 1 }}
+                        onClick={() => {
+                          setOpenAddCameraModal(true);
+                        }}
+                      >
+                        <AddIcon />
+                      </IconButton>
+                    </Box>
+                  </Box>
+
+                  <CameraSlider
+                    locations={locations}
+                    selectedLocation={selectedLocation}
+                    selectedCamera={selectedCamera}
+                    setSelectedCamera={setSelectedCamera}
+                    cameraList={cameraList}
+                  />
+                </Box>
+              </Slide>
+            </div>
+          ) : (
+            <div
+              onMouseEnter={() => {
+                setOpen(true);
+              }}
+            >
+              {/* <Slide direction="up" in={true} mountOnEnter unmountOnExit> */}
+              <Box
+                sx={{
+                  height: "35px",
+
+                  // transitionTimingFunction: "linear;",
+                  // transition: "height 2s;",
+                  // "@media (max-height: 650px)": {
+                  //   height: "125px",
+                  // },
+                  // "@media (max-height: 50px)": {
+                  //   height: "125px",
+                  // },
+                }}
+                m={1}
+              >
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Box display="flex">
+                    <LinkedCameraIcon />{" "}
+                    <Typography
+                      ml={1}
+                      variant="h5"
+                      sx={{ color: "#EDEDED", fontWeight: "600" }}
+                    >
+                      Cameras
+                    </Typography>
+                  </Box>
+                  <Box display="flex">
+                    <CustomDropDown
+                      Icon={LocationOnIcon}
+                      value={selectedLocation}
+                      handleChange={handleLocationChange}
+                      menuList={menuList}
+                    />
+                    <IconButton
+                      sx={{ ml: 1 }}
+                      onClick={() => {
+                        setOpenAddCameraModal(true);
+                      }}
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  </Box>
+                </Box>
+              </Box>
+              {/* </Slide> */}
+            </div>
+          )}
+        </Box>
+      ) : (
+        <>
+          <GridView setIsGridView={setIsGridView} />
+        </>
       )}
     </Box>
   );

@@ -17,9 +17,15 @@ const Player = (props) => {
     console.log(props.url);
     function fireOnVideoEnd() {
       console.log("ended");
+      // forceUpdate();
       setUrl("");
-      setUrl("");
-      setUrl(props.url);
+      setTimeout(() => {
+        setUrl(props.url);
+        // setUrl(
+        //   "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8"
+        // );
+      }, 1000);
+      // setUrl(props.url);
     }
     playerRef.current.addEventListener("ended", fireOnVideoEnd, true);
     console.log(playerRef);
@@ -32,6 +38,7 @@ const Player = (props) => {
       <ReactHlsPlayer
         playerRef={playerRef}
         src={url}
+        // src="https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8"
         autoPlay={true}
         // controls={true}
         // width="100%"
