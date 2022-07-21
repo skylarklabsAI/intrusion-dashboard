@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const get_camera_list = () => {
-    return api.get(`${cameraServiceBaseUrl}/camera_app/camera/`);
+    return api.get(`${cameraServiceBaseUrl}/camera-app/camera/`);
   };
 
   const fetch_cameras = () => {
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const add_camera = (data) => {
-    return api.post(`${cameraServiceBaseUrl}/camera_app/camera/`, data);
+    return api.post(`${cameraServiceBaseUrl}/camera-app/camera/`, data);
   };
 
   const handleAddCamera = async (data) => {
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
       form_data.append(key, data[key]);
     }
     return api.patch(
-      `${cameraServiceBaseUrl}/camera_app/camera/${camera_id}/`,
+      `${cameraServiceBaseUrl}/camera-app/camera/${camera_id}/`,
       form_data
     );
   };
@@ -120,7 +120,7 @@ export const AuthProvider = ({ children }) => {
     var formData = new FormData();
     formData.append("camera_id", camera_id);
     return api.post(
-      `${cameraServiceBaseUrl}/camera_app/camera/safe_delete/`,
+      `${cameraServiceBaseUrl}/camera-app/camera/safe_delete/`,
       formData
     );
   };
@@ -146,7 +146,7 @@ export const AuthProvider = ({ children }) => {
     console.log(config);
     return new Promise((resolve, reject) => {
       api
-        .post(`${cameraServiceBaseUrl}/camera_app/services/add-service/`, {
+        .post(`${cameraServiceBaseUrl}/camera-app/services/add-service/`, {
           camera_id,
           service,
           args: config,
@@ -168,7 +168,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetch_camera_by_id = (id) => {
     console.log("fetching camera by id");
-    return api.get(`${cameraServiceBaseUrl}/camera_app/camera/${id}/`);
+    return api.get(`${cameraServiceBaseUrl}/camera-app/camera/${id}/`);
   };
 
   function sleep(ms) {
@@ -218,7 +218,7 @@ export const AuthProvider = ({ children }) => {
   const fetch_camera_services = (id) => {
     console.log("fetching camera services by cam_id");
     return api.get(
-      `${cameraServiceBaseUrl}/camera_app/services/get-services/?id=${id}`
+      `${cameraServiceBaseUrl}/camera-app/services/get-services/?id=${id}`
     );
   };
 
