@@ -7,36 +7,44 @@ import ReactHlsPlayer from "react-hls-player/dist";
 //   global?.window && dynamic(() => import("react-hls-player/dist"), { ssr: false });
 
 const Player = (props) => {
-  // console.log(props);
+  console.log(props);
   const playerRef = React.useRef(null);
   const [loading, setLoading] = React.useState(true);
   const [url, setUrl] = React.useState(props.url);
 
   React.useEffect(() => {
-    // console.log(playerRef);
-    // console.log(props.url);
+    console.log(playerRef);
+    console.log(props.url);
     function fireOnVideoEnd() {
-      // console.log("ended");
+      console.log("ended");
+      // forceUpdate();
       setUrl("");
-      setUrl("");
-      setUrl(props.url);
+      setTimeout(() => {
+        setUrl(props.url);
+        // setUrl(
+        //   "https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8"
+        // );
+      }, 1000);
+      // setUrl(props.url);
     }
     playerRef.current.addEventListener("ended", fireOnVideoEnd, true);
-    // console.log(playerRef);
+    console.log(playerRef);
     return playerRef.current.removeEventListener("ended", fireOnVideoEnd);
   }, []);
 
-  // console.log(url);
+  console.log(url);
   return (
     <>
       <ReactHlsPlayer
         playerRef={playerRef}
         src={url}
+        // src="https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8"
         autoPlay={true}
         // controls={true}
-        width="100%"
-        height="auto"
-        style={{ borderRadius: "20px" }}
+        // width="100%"
+        width="auto"
+        height="100%"
+        style={{ borderRadius: "9px" }}
         hlsConfig={{
           // autoStartLoad: true,
           // // enableWorker: true,

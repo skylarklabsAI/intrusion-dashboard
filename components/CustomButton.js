@@ -10,7 +10,7 @@ const CustomOutlinedButton = ({
   sx = {},
   size = "large",
   disabled = false,
-  onClick = ()=>{}
+  onClick = () => { },
 }) => {
   return (
     <LoadingButton

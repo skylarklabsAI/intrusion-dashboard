@@ -20,6 +20,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CustomDropDown from "../../components/CustomDropDown";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import useAuth from "../../auth/authContext";
 
 const recordsList = {
   1: {
@@ -121,8 +122,9 @@ const CustomInputField = styled(TextField)({
 });
 
 const AlertsPage = () => {
-  const [alertsData, setAlertsData] = useState(recordsList);
-  const [selectedAlert, setSelectedAlert] = useState(1);
+  const [alertsData, setAlertsData] = useState([]);
+  const [selectedAlert, setSelectedAlert] = useState(0);
+
   return (
     <Box
       sx={{
@@ -147,6 +149,7 @@ const AlertsPage = () => {
             alertsData={alertsData}
             setSelectedAlert={setSelectedAlert}
             selectedAlert={selectedAlert}
+            setAlertsData={setAlertsData}
           />
         </Grid>
         <Grid
@@ -158,10 +161,12 @@ const AlertsPage = () => {
             height: "calc( 100vh - 90px)",
           }}
         >
-          <DetailWrapper
-            alertsData={alertsData}
-            selectedAlert={selectedAlert}
-          />
+          {alertsData.length !== 0 && (
+            <DetailWrapper
+              alertsData={alertsData}
+              selectedAlert={selectedAlert}
+            />
+          )}
         </Grid>
       </Grid>
     </Box>
@@ -212,24 +217,27 @@ const DetailWrapper = ({ alertsData, selectedAlert }) => {
             <Typography>
               {alertsData &&
                 alertsData[selectedAlert] &&
-                alertsData[selectedAlert]["suspects"]}
+                alertsData[selectedAlert]["notification_images"].length}
             </Typography>
           </Box>
           <Grid container spacing={2}>
             {alertsData &&
               alertsData[selectedAlert] &&
-              alertsData[selectedAlert]["cropped"].map((url, pos) => {
-                return (
-                  <IntrudersCard
-                    url={url}
-                    key={url}
-                    isSelected={pos === index}
-                    onClick={() => {
-                      setIndex(pos);
-                    }}
-                  />
-                );
-              })}
+              alertsData[selectedAlert]["notification_images"].map(
+                (data, pos) => {
+                  return (
+                    <IntrudersCard
+                      url={data["cropped_image"]}
+                      key={data["cropped_image"]}
+                      data={data}
+                      isSelected={pos === index}
+                      onClick={() => {
+                        setIndex(pos);
+                      }}
+                    />
+                  );
+                }
+              )}
           </Grid>
         </Box>
       </Box>
@@ -244,7 +252,9 @@ const FullImageCard = ({ alertsData, selectedAlert, index, setIndex }) => {
         src={
           alertsData &&
           alertsData[selectedAlert] &&
-          alertsData[selectedAlert]["full"][index]
+          alertsData[selectedAlert]["notification_images"][index][
+            "original_image"
+          ]
         }
         width="100%"
         style={{ marginBottom: "-5px", borderRadius: "9px" }}
@@ -285,12 +295,15 @@ const FullImageCard = ({ alertsData, selectedAlert, index, setIndex }) => {
           {index + 1} /{" "}
           {alertsData &&
             alertsData[selectedAlert] &&
-            alertsData[selectedAlert]["cropped"].length}
+            alertsData[selectedAlert]["notification_images"].length}
         </Typography>
         <IconButton
           sx={{ mr: 1 }}
           onClick={() => {
-            setIndex((index + 1) % alertsData[selectedAlert]["cropped"].length);
+            setIndex(
+              (index + 1) %
+                alertsData[selectedAlert]["notification_images"].length
+            );
           }}
         >
           <ArrowForwardIosIcon sx={{ fontSize: "18px" }} />
@@ -300,7 +313,7 @@ const FullImageCard = ({ alertsData, selectedAlert, index, setIndex }) => {
   );
 };
 
-const IntrudersCard = ({ url, isSelected, onClick = () => {} }) => {
+const IntrudersCard = ({ url, isSelected, data, onClick = () => {} }) => {
   return (
     <Grid item xs={12} md={6} lg={3}>
       <Box
@@ -315,7 +328,7 @@ const IntrudersCard = ({ url, isSelected, onClick = () => {} }) => {
           cursor: "pointer",
         }}
       >
-        <img src={url} width="100%" />
+        <img src={url} width="100%" height="100%" />
         <Box
           sx={{
             position: "absolute",
@@ -345,7 +358,11 @@ const IntrudersCard = ({ url, isSelected, onClick = () => {} }) => {
               fontWeight: "400",
             }}
           >
-            {/* 10:15 PM */}
+            {moment(data["created_on"]).hour() +
+              ":" +
+              moment(data["created_on"]).minutes() +
+              ":" +
+              moment(data["created_on"]).seconds()}
           </Typography>
         </Box>
       </Box>
@@ -353,11 +370,81 @@ const IntrudersCard = ({ url, isSelected, onClick = () => {} }) => {
   );
 };
 
-const ListWrapper = ({ alertsData, setSelectedAlert, selectedAlert }) => {
+const ListWrapper = ({
+  alertsData,
+  setSelectedAlert,
+  selectedAlert,
+  setAlertsData,
+}) => {
   const [from, setFrom] = useState(null);
   const [to, setTo] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [menuList, setMenuList] = useState({ all: "All Cameras" });
+  const [loading, setLoading] = useState(false);
+  const [nextLink, setNextLink] = useState(null);
+  const {
+    fetch_notifications,
+    fetch_cameras,
+    cameraList,
+    fetch_next_notifications,
+  } = useAuth();
+  useEffect(() => {
+    fetch_cameras();
+    handleFetchNotifications();
+  }, []);
+
+  useEffect(() => {
+    const temp = { all: "All Cameras" };
+    cameraList.map((camera) => {
+      temp[camera["camera_id"]] = camera["label"];
+    });
+    setMenuList(temp);
+  }, [cameraList]);
+
+  const handleFetchNextNotifications = () => {
+    if (!nextLink) return;
+    setLoading(true);
+    fetch_next_notifications(nextLink)
+      .then((res) => {
+        console.log(res);
+        setNextLink(res.data.next);
+        setAlertsData([...alertsData, ...res.data.results]);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
+
+  const handleFetchNotifications = () => {
+    const url = "?limit=40";
+    if (from !== null)
+      url += `&start_time=${moment(from).startOf("day").toISOString()}`;
+    if (to !== null)
+      url += `&end_time=${moment(to).endOf("day").toISOString()}`;
+    if (selectedLocation !== "all") url += `&camera_id=${selectedLocation}`;
+    fetch_notifications(url)
+      .then((res) => {
+        setNextLink(res.data.next);
+        console.log(res.data.results);
+        setAlertsData(res.data.results);
+        setSelectedAlert(0);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleScroll = (e) => {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+    if (bottom) {
+      console.log("reached bottom");
+      handleFetchNextNotifications();
+    }
+  };
+
   const handleLocationChange = (event) => {
     setSelectedLocation(event.target.value);
   };
@@ -374,24 +461,25 @@ const ListWrapper = ({ alertsData, setSelectedAlert, selectedAlert }) => {
         <Box m={2} ml={0}>
           <CustomDatePicker label="Date - To" value={to} setValue={setTo} />
         </Box>
-        <Tooltip title="Disabled">
-          <Box m={2} ml={0}>
-            <CustomDropDown
-              Icon={LocationOnIcon}
-              value={selectedLocation}
-              handleChange={handleLocationChange}
-              menuList={menuList}
-              disabled
-            />
-          </Box>
-        </Tooltip>
+
+        <Box m={2} ml={0}>
+          <CustomDropDown
+            Icon={LocationOnIcon}
+            value={selectedLocation}
+            handleChange={handleLocationChange}
+            menuList={menuList}
+          />
+        </Box>
+
         <Box flex={1} />
         <CustomOutlinedButton
           text="Filter"
           size="small"
           StartIcon={FilterListIcon}
           sx={{ fontWeight: "400" }}
-          disabled
+          onClick={() => {
+            handleFetchNotifications();
+          }}
         />
       </Box>
       <Divider />
@@ -400,15 +488,16 @@ const ListWrapper = ({ alertsData, setSelectedAlert, selectedAlert }) => {
         spacing={2}
         p={2}
         sx={{ maxHeight: "calc( 100vh - 180px)", overflowY: "scroll" }}
+        onScroll={handleScroll}
       >
-        {Object.keys(alertsData).map((key) => {
+        {alertsData.map((data, pos) => {
           return (
             <AlertCard
-              key={key}
-              isSelected={key === selectedAlert}
-              data={alertsData[key]}
+              key={data["id"]}
+              isSelected={pos === selectedAlert}
+              data={data}
               onClick={() => {
-                setSelectedAlert(key);
+                setSelectedAlert(pos);
               }}
             />
           );
@@ -438,7 +527,11 @@ const AlertCard = ({ isSelected, data, onClick = () => {} }) => {
         }}
       >
         <img
-          src={data && data["thumbnail_url"]}
+          src={
+            data &&
+            data["notification_images"] &&
+            data["notification_images"][0]["original_image"]
+          }
           width="100%"
           style={{ marginBottom: "-5px" }}
         />
@@ -470,15 +563,18 @@ const AlertCard = ({ isSelected, data, onClick = () => {} }) => {
           justifyContent="space-between"
         >
           <Typography ml={1} variant="body2">
-            {data && data["location"]}
+            {data && data["camera_label"]}
           </Typography>
           <Typography mr={1} variant="body2">
-            Suspects: {data && data["suspects"]}
+            Suspects:{" "}
+            {data &&
+              data["notification_images"] &&
+              data["notification_images"].length}
           </Typography>
         </Box>
         <Box position="absolute" width="100%" top="10px">
           <Typography ml={1} variant="body2">
-            {new Date().toLocaleDateString("en-US", {
+            {new Date(data && data["created_on"]).toLocaleDateString("en-US", {
               year: "numeric",
               month: "short",
               day: "numeric",
@@ -495,7 +591,6 @@ const CustomDatePicker = ({ label, value, setValue }) => {
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <DatePicker
         label={label}
-        disabled
         maxDate={moment()}
         value={value}
         inputFormat="DD MMM YYYY"
@@ -505,9 +600,7 @@ const CustomDatePicker = ({ label, value, setValue }) => {
           setValue(newValue);
         }}
         renderInput={(params) => (
-          <Tooltip title="Disabled">
-            <CustomInputField {...params} helperText={null} size="small" />
-          </Tooltip>
+          <CustomInputField {...params} helperText={null} size="small" />
         )}
       />
     </LocalizationProvider>

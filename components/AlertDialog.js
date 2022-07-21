@@ -11,20 +11,20 @@ import BlockIcon from "@mui/icons-material/Block";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useEffect, useState } from "react";
-import CustomOutlinedButton from "../../../components/CustomButton";
+import CustomOutlinedButton from "./CustomButton";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import useAuth from "../auth/authContext";
 import moment from "moment";
 
-const AlertDialog = ({
-  open,
-  handleClose,
-  alertData,
-  onResponding = () => {},
-  onRevert = () => {},
-}) => {
+const AlertDialog = ({ open, handleClose, alertData = { image: "[]" } }) => {
   const [index, setIndex] = useState(0);
+  const [images, setImages] = useState([]);
+  const { notification_resolve } = useAuth();
   useEffect(() => {
     setIndex(0);
+    console.log(alertData);
+    console.log(JSON.parse(alertData["image"]));
+    setImages(JSON.parse(alertData["image"]));
   }, [alertData]);
   return (
     <Dialog
@@ -91,7 +91,7 @@ const AlertDialog = ({
                   sx={{ color: "#EDEDED" }}
                 >
                   <Typography>Intruders Captured</Typography>
-                  <Typography>{alertData && alertData["suspects"]}</Typography>
+                  <Typography>{images.length}</Typography>
                 </Box>
                 <Grid
                   container
@@ -99,21 +99,19 @@ const AlertDialog = ({
                   mt={1}
                   sx={{ height: "450px", overflowY: "scroll", pr: 1 }}
                 >
-                  {alertData &&
-                    alertData["notification_images"] &&
-                    alertData["notification_images"].map((data, pos) => {
-                      return (
-                        <IntrudersCard
-                          url={data["cropped_image"]}
-                          alertData={data}
-                          key={data["cropped_image"]}
-                          isSelected={index === pos}
-                          onClick={() => {
-                            setIndex(pos);
-                          }}
-                        />
-                      );
-                    })}
+                  {images.map((url, pos) => {
+                    return (
+                      <IntrudersCard
+                        url={url[1]}
+                        alertData={alertData}
+                        key={url}
+                        isSelected={index === pos}
+                        onClick={() => {
+                          setIndex(pos);
+                        }}
+                      />
+                    );
+                  })}
                 </Grid>
               </Box>
             </Box>
@@ -127,6 +125,7 @@ const AlertDialog = ({
                 alertData={alertData}
                 index={index}
                 setIndex={setIndex}
+                images={images}
               />
               <Box
                 mt={3}
@@ -135,42 +134,27 @@ const AlertDialog = ({
                 alignItems="center"
                 justifyContent="space-around"
               >
-                {alertData && alertData["isresolved"] === true ? (
-                  <CustomOutlinedButton
-                    text="Mark As Not Resolved"
-                    StartIcon={CancelIcon}
-                    sx={{ fontWeight: "400", background: "#202F46" }}
-                    onClick={() => {
-                      onRevert();
-                      handleClose();
-                    }}
-                  />
-                ) : (
-                  <CustomOutlinedButton
-                    text="Mark As Resolved"
-                    StartIcon={CheckCircleIcon}
-                    sx={{ fontWeight: "400", background: "#2EAB60" }}
-                    onClick={() => {
-                      onResponding();
-                      handleClose();
-                    }}
-                  />
-                )}
-
                 <CustomOutlinedButton
-                  text={
-                    alertData && alertData["resolved"]
-                      ? "Close"
-                      : "Respond Later"
-                  }
+                  text="Responded"
+                  StartIcon={CheckCircleIcon}
+                  sx={{ fontWeight: "400" }}
+                  onClick={() => {
+                    notification_resolve(alertData["id"])
+                      .then((res) => {
+                        console.log(res);
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                    handleClose();
+                  }}
+                />
+                <CustomOutlinedButton
+                  text="Respond Later"
                   sx={{
                     fontWeight: "400",
-                    background:
-                      alertData && alertData["resolved"]
-                        ? "#202F46"
-                        : "#D33A3A",
+                    background: "#202F46",
                     borderTop: "1.5px solid #3C5170",
-                    width: "200px",
                   }}
                   onClick={() => {
                     handleClose();
@@ -249,13 +233,26 @@ const IntrudersCard = ({ url, alertData, isSelected, onClick = () => {} }) => {
   );
 };
 
-const FullImageCard = ({ alertData, index, setIndex }) => {
+const FullImageCard = ({ alertData, index, setIndex, images }) => {
   return (
-    <Box position="relative">
+    <Box position="relative" minHeight="70px">
       <img
-        src={alertData && alertData["notification_images"] && alertData["notification_images"][index] && alertData["notification_images"][index]["original_image"]}
+        src={images[index][0]}
         width="100%"
         style={{ marginBottom: "-5px", borderRadius: "9px" }}
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          height: "100%",
+          width: "100%",
+          borderRadius: "9px",
+          overflow: "hidden",
+          background:
+            "linear-gradient(0deg, rgba(18, 23, 69, 0.75) 0%, rgba(36, 36, 36, 0.22) 40.41%, rgba(142, 142, 142, 0) 77.6%)",
+        }}
       />
       <Box
         sx={{
@@ -282,19 +279,6 @@ const FullImageCard = ({ alertData, index, setIndex }) => {
         }}
       ><Typography ml={2}>{alertData && alertData['camera_label']}</Typography></Box>
       <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          height: "100%",
-          width: "100%",
-          borderRadius: "9px",
-          overflow: "hidden",
-          background:
-            "linear-gradient(0deg, rgba(18, 23, 69, 0.75) 0%, rgba(36, 36, 36, 0.22) 40.41%, rgba(142, 142, 142, 0) 77.6%)",
-        }}
-      />
-      <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
@@ -315,12 +299,12 @@ const FullImageCard = ({ alertData, index, setIndex }) => {
           <ArrowBackIosIcon sx={{ fontSize: "18px" }} />
         </IconButton>
         <Typography>
-          {index + 1} / {alertData["notification_images"].length}
+          {index + 1} / {images.length}
         </Typography>
         <IconButton
           sx={{ mr: 2 }}
           onClick={() => {
-            setIndex((index + 1) % alertData["notification_images"].length);
+            setIndex((index + 1) % images.length);
           }}
         >
           <ArrowForwardIosIcon sx={{ fontSize: "18px" }} />
