@@ -267,6 +267,30 @@ const FullImageCard = ({ alertData, index, setIndex }) => {
           borderRadius: "9px",
           overflow: "hidden",
           background:
+            "linear-gradient(180deg, rgba(18, 23, 69, 0.75) 0%, rgba(36, 36, 36, 0.22) 40.41%, rgba(142, 142, 142, 0) 77.6%)",
+        }}
+      />
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        width="100%"
+        sx={{
+          position: "absolute",
+          top: 5,
+          left: 0,
+        }}
+      ><Typography ml={2}>{alertData && alertData['camera_label']}</Typography></Box>
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          height: "100%",
+          width: "100%",
+          borderRadius: "9px",
+          overflow: "hidden",
+          background:
             "linear-gradient(0deg, rgba(18, 23, 69, 0.75) 0%, rgba(36, 36, 36, 0.22) 40.41%, rgba(142, 142, 142, 0) 77.6%)",
         }}
       />

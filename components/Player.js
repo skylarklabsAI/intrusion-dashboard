@@ -44,7 +44,7 @@ const Player = (props) => {
         // width="100%"
         width="auto"
         height="100%"
-        style={{ borderRadius: "20px" }}
+        style={{ borderRadius: "9px" }}
         hlsConfig={{
           // autoStartLoad: true,
           // // enableWorker: true,

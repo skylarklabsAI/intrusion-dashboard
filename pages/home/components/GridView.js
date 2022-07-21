@@ -240,12 +240,12 @@ const GridView = ({ setIsGridView }) => {
                     style={{
                       position: "relative",
                       display: "flex",
-                      width:
-                        window.innerWidth < 960
-                          ? window.innerWidth < 600
-                            ? "45vw"
-                            : "45vw"
-                          : aspectRatio * factor,
+                      width:aspectRatio * factor,
+                        // window.innerWidth < 960
+                        //   ? window.innerWidth < 600
+                        //     ? "45vw"
+                        //     : "30vw"
+                        //   : aspectRatio * factor,
                       height: window.innerWidth < 600 ? "auto" : factor,
                       padding: 5,
                       cursor: "pointer",
@@ -259,6 +259,43 @@ const GridView = ({ setIsGridView }) => {
                       // height="100%"
                       controls={false}
                     />
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        height: "calc(100% - 5px)",
+                        width: "calc(100% - 15px)",
+                        borderRadius: "9px",
+                        ml:0.5,
+                        background:
+                          "linear-gradient(0deg, #000000 2px, rgba(0, 0, 0, 0.83) 15px, rgba(36, 36, 36, 0.22) 35px, rgba(72, 72, 72, 0) 40px, rgba(142, 142, 142, 0) 40px)",
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        bottom: 0,
+                        height: "35px",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Typography
+                        ml={1}
+                        sx={{
+                          flex: 1,
+                          color: "white",
+                          fontSize: "12px",
+                          lineHeight: "13px",
+                          fontWeight: "400",
+                        }}
+                      >
+                        {camName}
+                      </Typography>
+                    </Box>
                   </div>
                   {/* </MuiNextLink> */}
                 </div>

@@ -26,6 +26,7 @@ import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import FullscreenExitRoundedIcon from "@mui/icons-material/FullscreenExitRounded";
 import Grid3x3Icon from "@mui/icons-material/Grid3x3";
 import GridView from "./components/GridView";
+import LoadingOverlay from "react-loading-overlay";
 const Player =
   // global?.window &&
   dynamic(() => import("../../components/Player"), { ssr: false });
@@ -365,6 +366,7 @@ const LiveWrapper = ({
   const [open, setOpen] = React.useState(false);
   const handle = useFullScreenHandle();
   const [isGridView, setIsGridView] = React.useState(false);
+  const { loadingCameras } = useAuth();
   React.useEffect(() => {
     const temp = { all: "All Cameras" };
 
@@ -436,7 +438,33 @@ const LiveWrapper = ({
                   key={selectedCamera["stream_url"]}
                 />
               ) : (
-                <Box></Box>
+                <Box>
+                  {loadingCameras.includes(
+                    selectedCamera && selectedCamera["camera_id"]
+                  ) ? (
+                    <LoadingOverlay spinner active={true} text="Initializing Camera...">
+                      <Box height="100%" width="100%"></Box>
+                    </LoadingOverlay>
+                  ) : (
+                    <Box
+                      height="100%"
+                      width="100%"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      {cameraList.length !== 0 ? (
+                        <Typography sx={{ textAlign: "center" }}>
+                          Camera is not Processing. Add Service to Process.
+                        </Typography>
+                      ) : (
+                        <Typography sx={{ textAlign: "center" }}>
+                          No Cameras are Added Yet!
+                        </Typography>
+                      )}
+                    </Box>
+                  )}
+                </Box>
               )}
             </Box>
           </Box>

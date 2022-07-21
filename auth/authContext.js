@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cameraList, setCameraList] = React.useState([]);
+  const [loadingCameras, setLoadingCameras] = React.useState([]);
 
   useEffect(() => {
     if (loading == true) {
@@ -145,6 +146,7 @@ export const AuthProvider = ({ children }) => {
           console.log(response);
           // ---------- again fetching cameras ----------------//
           HandleStreamUrlRefresh(camera_id);
+          setLoadingCameras([camera_id, ...loadingCameras]);
           resolve(true);
         })
         .catch((err) => {
@@ -188,12 +190,18 @@ export const AuthProvider = ({ children }) => {
           i += 1;
         }
         console.log("outside while");
-        await sleep(10000); // wait for hls to run
+        await sleep(7000); // wait for hls to run
         fetch_cameras();
       })
       .catch((err) => {
         console.log(err);
         console.log(err);
+      })
+      .finally(() => {
+        const temp = loadingCameras.filter((cam) => {
+          return cam !== camera_id;
+        });
+        setLoadingCameras(temp);
       });
   };
 
@@ -224,7 +232,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     TokenService.removeUser();
-    window.location.pathname = '/login';
+    window.location.pathname = "/login";
   };
 
   return (
@@ -232,6 +240,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         loading,
+        loadingCameras,
         cameraList,
         login,
         register,
