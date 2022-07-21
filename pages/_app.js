@@ -7,7 +7,7 @@ import React from "react";
 import "/styles/globals.css";
 import theme from "../styles/theme";
 import { AuthProvider } from "../auth/authContext";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   AppBar,
@@ -43,6 +43,7 @@ export default function MyApp(props) {
     console.log("1");
     if (!user) return;
     console.log("hell");
+    requestPermission();
     firebaseCloudMessaging.init();
   }, [loading, user]);
 
@@ -71,6 +72,8 @@ export default function MyApp(props) {
     Notification.requestPermission().then((permission) => {
       if (permission === "granted") {
         console.log("Notification permission granted.");
+      } else {
+        toast.error("Allowwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww.......");
       }
     });
   }
