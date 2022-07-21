@@ -22,19 +22,25 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    return api
-      .post(`${authServiceBaseUrl}/auth/accounts/login/`, {
-        email,
-        password,
-      })
-      .then((response) => {
-        console.log(response);
-        if (response.data.access) {
-          TokenService.setUser(response.data);
-          window.location.pathname = "/";
-        }
-        return response.data;
-      });
+    return new Promise((resolve, reject) => {
+      api
+        .post(`${authServiceBaseUrl}/auth/accounts/login/`, {
+          email,
+          password,
+        })
+        .then((response) => {
+          console.log(response);
+          if (response.data.access) {
+            TokenService.setUser(response.data);
+            window.location.pathname = "/";
+          }
+          resolve(response.data);
+        })
+        .catch((err) => {
+          console.log(err.response);
+          reject(err.response);
+        });
+    });
   };
 
   const register = async (data) => {

@@ -105,7 +105,7 @@ const SignInDialog = ({ open = true, handleClose = () => {} }) => {
           setIsLoading(false);
         })
         .catch((err) => {
-          toast.error("Failed to Login");
+          toast.error("failed to login...");
           setIsLoading(false);
         });
     },
