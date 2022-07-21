@@ -3,6 +3,12 @@ import axios from "axios";
 import api from "../services/api";
 import TokenService from "../services/tokenService";
 
+const cameraServiceBaseUrl = "http://13.234.7.128:8000";
+const notificationServiceBaseUrl = "http://65.2.145.64:8000"; // [Todo] dont forgot to change notificationServiceBaseUrl in utils/webPush.js
+const authServiceBaseUrl = "http://3.111.32.94:8002";
+
+// [Todo] dont forgot to change baseURL in services/api.js
+
 const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -19,7 +25,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     return api
-      .post("http://3.111.32.94:8002/auth/accounts/login/", {
+      .post(`${authServiceBaseUrl}/auth/accounts/login/`, {
         email,
         password,
       })
@@ -36,14 +42,14 @@ export const AuthProvider = ({ children }) => {
   const register = async (data) => {
     console.log(data);
     const response = await api.post(
-      "http://3.111.32.94:8002/auth/accounts/register/",
+      `${authServiceBaseUrl}/auth/accounts/register/`,
       data
     );
     return response;
   };
 
   const get_camera_list = () => {
-    return api.get("http://13.234.7.128:8000/camera_app/camera/");
+    return api.get(`${cameraServiceBaseUrl}/camera_app/camera/`);
   };
 
   const fetch_cameras = () => {
@@ -59,7 +65,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const add_camera = (data) => {
-    return api.post("http://13.234.7.128:8000/camera_app/camera/", data);
+    return api.post(`${cameraServiceBaseUrl}/camera_app/camera/`, data);
   };
 
   const handleAddCamera = async (data) => {
@@ -85,7 +91,7 @@ export const AuthProvider = ({ children }) => {
       form_data.append(key, data[key]);
     }
     return api.patch(
-      `http://13.234.7.128:8000/camera_app/camera/${camera_id}/`,
+      `${cameraServiceBaseUrl}/camera_app/camera/${camera_id}/`,
       form_data
     );
   };
@@ -110,7 +116,7 @@ export const AuthProvider = ({ children }) => {
     var formData = new FormData();
     formData.append("camera_id", camera_id);
     return api.post(
-      `http://13.234.7.128:8000/camera_app/camera/safe_delete/`,
+      `${cameraServiceBaseUrl}/camera_app/camera/safe_delete/`,
       formData
     );
   };
@@ -136,7 +142,7 @@ export const AuthProvider = ({ children }) => {
     console.log(config);
     return new Promise((resolve, reject) => {
       api
-        .post("http://13.234.7.128:8000/camera_app/services/add-service/", {
+        .post(`${cameraServiceBaseUrl}/camera_app/services/add-service/`, {
           camera_id,
           service,
           args: config,
@@ -158,7 +164,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetch_camera_by_id = (id) => {
     console.log("fetching camera by id");
-    return api.get(`http://13.234.7.128:8000/camera_app/camera/${id}/`);
+    return api.get(`${cameraServiceBaseUrl}/camera_app/camera/${id}/`);
   };
 
   function sleep(ms) {
@@ -208,13 +214,13 @@ export const AuthProvider = ({ children }) => {
   const fetch_camera_services = (id) => {
     console.log("fetching camera services by cam_id");
     return api.get(
-      `http://13.234.7.128:8000/camera_app/services/get-services/?id=${id}`
+      `${cameraServiceBaseUrl}/camera_app/services/get-services/?id=${id}`
     );
   };
 
   const fetch_notifications = (url = "") => {
     return api.get(
-      `http://65.2.145.64:8000/notifications/getnotification/${url}`
+      `${notificationServiceBaseUrl}/notifications/getnotification/${url}`
     );
   };
 
@@ -223,11 +229,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const notification_resolve = (id) => {
-    return api.put(`http://65.2.145.64:8000/notifications/resolve/${id}/`);
+    return api.put(
+      `${notificationServiceBaseUrl}/notifications/resolve/${id}/`
+    );
   };
 
   const notification_unresolve = (id) => {
-    return api.put(`http://65.2.145.64:8000/notifications/unresolve/${id}/`);
+    return api.put(
+      `${notificationServiceBaseUrl}/notifications/unresolve/${id}/`
+    );
   };
 
   const logout = () => {

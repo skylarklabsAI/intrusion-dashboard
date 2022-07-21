@@ -4,6 +4,8 @@ import localforage from "localforage";
 import api from "../services/api";
 import { toast } from "react-toastify";
 
+const notificationServiceBaseUrl = "http://65.2.145.64:8000";
+
 export const firebaseCloudMessaging = {
   tokenInlocalforage: async () => {
     return localforage.getItem("fcm_token");
@@ -41,9 +43,12 @@ export const firebaseCloudMessaging = {
           console.log("fcm token : ", fcm_token);
           if (fcm_token) {
             api
-              .post("http://65.2.145.64:8000/notifications/fcm-devices/", {
-                registration_id: fcm_token,
-              })
+              .post(
+                `${notificationServiceBaseUrl}/notifications/fcm-devices/`,
+                {
+                  registration_id: fcm_token,
+                }
+              )
               .then((res) => {
                 console.log(res);
                 localforage.setItem("fcm_token", fcm_token);
@@ -130,7 +135,7 @@ export const onMessageListener = () => {
 //       if (currentToken) {
 //         console.log("current token for client: ", currentToken);
 //         api
-//           .post("http://65.2.145.64:8000/notifications/fcm-devices/", {
+//           .post("/notifications/fcm-devices/", {
 //             registration_id: currentToken,
 //           })
 //           .then((res) => {
