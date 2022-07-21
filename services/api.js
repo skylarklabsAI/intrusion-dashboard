@@ -1,7 +1,7 @@
 import axios from "axios";
 import TokenService from "./tokenService";
 
-const baseURL = "http://3.111.32.94:8002";
+const baseURL = "https://prodserver.skylarklabs.ai";
 const loginEndpoint = "/auth/accounts/login/";
 const refreshEndpoint = "/auth/token/refresh/";
 const registerEndpoint = "/auth/accounts/register/";

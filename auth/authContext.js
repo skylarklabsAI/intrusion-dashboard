@@ -5,9 +5,7 @@ import TokenService from "../services/tokenService";
 
 const cameraServiceBaseUrl = "http://13.234.7.128:8000";
 const notificationServiceBaseUrl = "http://65.2.145.64:8000"; // [Todo] dont forgot to change notificationServiceBaseUrl in utils/webPush.js
-const authServiceBaseUrl = "http://3.111.32.94:8002";
-
-// [Todo] dont forgot to change baseURL in services/api.js
+const authServiceBaseUrl = "https://prodserver.skylarklabs.ai"; // [Todo] dont forgot to change baseURL in services/api.js
 
 const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
