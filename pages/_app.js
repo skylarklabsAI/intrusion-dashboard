@@ -40,7 +40,9 @@ export default function MyApp(props) {
 
   React.useEffect(() => {
     if (loading) return;
+    console.log("1");
     if (!user) return;
+    console.log("hell");
     firebaseCloudMessaging.init();
   }, [loading, user]);
 

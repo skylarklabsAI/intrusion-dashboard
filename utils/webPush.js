@@ -12,6 +12,7 @@ export const firebaseCloudMessaging = {
   },
 
   init: async function () {
+    console.log("2");
     if (!firebase.apps.length) {
       firebase.initializeApp({
         apiKey: "AIzaSyAQ0xsOttC2XloZbS-dejqLJgK-Kdf-btw",
@@ -22,52 +23,49 @@ export const firebaseCloudMessaging = {
         appId: "1:28833168765:web:d9aec9936e519c941f6014",
         measurementId: "G-29T2LF0L43",
       });
-      try {
-        const messaging = firebase.messaging();
-        // const tokenInLocalForage = await this.tokenInlocalforage();
-        //if FCM token is already there just return the token
+    }
+    try {
+      const messaging = firebase.messaging();
+      // const tokenInLocalForage = await this.tokenInlocalforage();
+      //if FCM token is already there just return the token
 
-        // console.log("tokenInLocalForage", tokenInLocalForage);
-        // if (tokenInLocalForage !== null) {
-        //   return tokenInLocalForage;
-        // }
-        //requesting notification permission from browser
-        const status = await Notification.requestPermission();
+      // console.log("tokenInLocalForage", tokenInLocalForage);
+      // if (tokenInLocalForage !== null) {
+      //   return tokenInLocalForage;
+      // }
+      //requesting notification permission from browser
+      // const status = await Notification.requestPermission();
 
-        if (status && status === "granted") {
-          //getting token from FCM
-          const fcm_token = await messaging.getToken({
-            vapidKey:
-              "BFrp2VDHzA8RinGsXzdCg6RFtgxTQdD2U8rKHD8yLwnR_kiNEAXnj1VLiqJMXJ6MEHWJjolI-uaXlgvz7pMvLqY",
+      // if (status && status === "granted") {
+      //getting token from FCM
+      const fcm_token = await messaging.getToken({
+        vapidKey:
+          "BFrp2VDHzA8RinGsXzdCg6RFtgxTQdD2U8rKHD8yLwnR_kiNEAXnj1VLiqJMXJ6MEHWJjolI-uaXlgvz7pMvLqY",
+      });
+      console.log("fcm token : ", fcm_token);
+      if (fcm_token) {
+        api
+          .post(`${notificationServiceBaseUrl}/notifications/fcm-devices/`, {
+            registration_id: fcm_token,
+          })
+          .then((res) => {
+            console.log(res);
+            localforage.setItem("fcm_token", fcm_token);
+            console.log("fcm token", fcm_token);
+          })
+          .catch((err) => {
+            console.log(err);
           });
-          console.log("fcm token : ", fcm_token);
-          if (fcm_token) {
-            api
-              .post(
-                `${notificationServiceBaseUrl}/notifications/fcm-devices/`,
-                {
-                  registration_id: fcm_token,
-                }
-              )
-              .then((res) => {
-                console.log(res);
-                localforage.setItem("fcm_token", fcm_token);
-                console.log("fcm token", fcm_token);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
 
-            return fcm_token;
-            //setting FCM token in indexed db using localforage
-          }
-        } else {
-          toast.error("Allow Notifications to get real time alerts!");
-        }
-      } catch (error) {
-        console.error(error);
-        return null;
+        return fcm_token;
+        //setting FCM token in indexed db using localforage
       }
+      // } else {
+      //   toast.error("Allow Notifications to get real time alerts!");
+      // }
+    } catch (error) {
+      console.error(error);
+      return null;
     }
   },
 };
