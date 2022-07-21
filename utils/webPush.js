@@ -4,7 +4,7 @@ import localforage from "localforage";
 import api from "../services/api";
 import { toast } from "react-toastify";
 
-const notificationServiceBaseUrl = "http://65.2.145.64:8000";
+const notificationServiceBaseUrl = "https://prodserver.skylarklabs.ai";
 
 export const firebaseCloudMessaging = {
   tokenInlocalforage: async () => {

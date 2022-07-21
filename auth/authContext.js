@@ -3,8 +3,8 @@ import axios from "axios";
 import api from "../services/api";
 import TokenService from "../services/tokenService";
 
-const cameraServiceBaseUrl = "http://13.234.7.128:8000";
-const notificationServiceBaseUrl = "http://65.2.145.64:8000"; // [Todo] dont forgot to change notificationServiceBaseUrl in utils/webPush.js
+const cameraServiceBaseUrl = "https://prodserver.skylarklabs.ai";
+const notificationServiceBaseUrl = "https://prodserver.skylarklabs.ai"; // [Todo] dont forgot to change notificationServiceBaseUrl in utils/webPush.js
 const authServiceBaseUrl = "https://prodserver.skylarklabs.ai"; // [Todo] dont forgot to change baseURL in services/api.js
 
 const AuthContext = createContext({});
