@@ -442,7 +442,11 @@ const LiveWrapper = ({
                   {loadingCameras.includes(
                     selectedCamera && selectedCamera["camera_id"]
                   ) ? (
-                    <LoadingOverlay spinner active={true} text="Initializing Camera...">
+                    <LoadingOverlay
+                      spinner
+                      active={true}
+                      text="Initializing Camera..."
+                    >
                       <Box height="100%" width="100%"></Box>
                     </LoadingOverlay>
                   ) : (

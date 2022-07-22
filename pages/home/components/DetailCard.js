@@ -47,10 +47,9 @@ const DetailCard = ({ record, onClick = () => {} }) => {
       >
         <img
           src={
-            record &&
-            record["notification_images"] &&
-            record["notification_images"][0] &&
-            record["notification_images"][0]["original_image"]
+            record && record["image"]
+              ? record["image"]
+              : "https://demofree.sirv.com/nope-not-here.jpg"
           }
           // src="/images/thumbnail.png"
           height="100%"
@@ -75,12 +74,7 @@ const DetailCard = ({ record, onClick = () => {} }) => {
       >
         <Stack sx={{ flex: 1 }}>
           <Field title="Location" subtitle={"-"} />
-          <Field
-            title="Camera"
-            subtitle={
-              record && record["camera_label"]
-            }
-          />
+          <Field title="Camera" subtitle={record && record["camera_label"]} />
           <Field
             title="Time"
             subtitle={
@@ -91,10 +85,7 @@ const DetailCard = ({ record, onClick = () => {} }) => {
                 : "-"
             }
           />
-          <Field
-            title="Suspects"
-            subtitle={record && record["notification_images"].length}
-          />
+          <Field title="Suspects" subtitle={record && record["suspects"]} />
         </Stack>
       </Box>
       {/* <Box sx={{ position: "absolute", bottom: "10px", right: "10px" }}>

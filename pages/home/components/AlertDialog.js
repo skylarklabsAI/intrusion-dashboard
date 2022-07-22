@@ -14,6 +14,8 @@ import { useEffect, useState } from "react";
 import CustomOutlinedButton from "../../../components/CustomButton";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import moment from "moment";
+import useAuth from "../../../auth/authContext";
+import LoadingOverlay from "react-loading-overlay";
 
 const AlertDialog = ({
   open,
@@ -23,8 +25,21 @@ const AlertDialog = ({
   onRevert = () => {},
 }) => {
   const [index, setIndex] = useState(0);
+  const [completeAlertData, setCompleteAlertData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { fetch_detailed_notification } = useAuth();
   useEffect(() => {
-    setIndex(0);
+    setLoading(true);
+    fetch_detailed_notification(alertData["id"])
+      .then((res) => {
+        console.log(res);
+        setCompleteAlertData(res.data);
+        setLoading(false);
+        setIndex(0);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [alertData]);
   return (
     <Dialog
@@ -40,147 +55,156 @@ const AlertDialog = ({
       }}
       fullWidth
     >
-      <Box
-        sx={{
-          background: "#040D18dd",
-          border: "2px solid #3B4B82",
-          position: "relative",
-          borderRadius: "9px",
-          p: 4,
-          px: 8,
-        }}
-      >
-        <Box position="absolute" top="10px" right="10px">
-          <IconButton
-            onClick={() => {
-              handleClose();
-            }}
-          >
-            <CancelIcon sx={{ color: "#46567E" }} />
-          </IconButton>
-        </Box>
+      <LoadingOverlay spinner active={loading} text="fetching alert...">
         <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          mb={1.5}
+          sx={{
+            background: "#040D18dd",
+            border: "2px solid #3B4B82",
+            position: "relative",
+            borderRadius: "9px",
+            p: 4,
+            px: 8,
+          }}
         >
-          <BlockIcon />
-          <Typography
-            ml={1.5}
-            sx={{ color: "#EDEDED", fontSize: "25px", fontWeight: "500" }}
-          >
-            Intrusion Alert
-          </Typography>
-        </Box>
-        <Grid container spacing={1} wrap="wrap-reverse">
-          <Grid item xs={12} md={5}>
-            <Box
-              display="flex"
-              sx={{
-                border: "1px solid rgba(57, 76, 104, 0.5)",
-                borderRadius: "9px",
-                p: 2,
+          <Box position="absolute" top="10px" right="10px">
+            <IconButton
+              onClick={() => {
+                handleClose();
               }}
             >
-              <Box mx={2} width="100%">
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  mb={2}
-                  sx={{ color: "#EDEDED" }}
-                >
-                  <Typography>Intruders Captured</Typography>
-                  <Typography>{alertData && alertData["suspects"]}</Typography>
+              <CancelIcon sx={{ color: "#46567E" }} />
+            </IconButton>
+          </Box>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            mb={1.5}
+          >
+            <BlockIcon />
+            <Typography
+              ml={1.5}
+              sx={{ color: "#EDEDED", fontSize: "25px", fontWeight: "500" }}
+            >
+              Intrusion Alert
+            </Typography>
+          </Box>
+          <Grid container spacing={1} wrap="wrap-reverse">
+            <Grid item xs={12} md={5}>
+              <Box
+                display="flex"
+                sx={{
+                  border: "1px solid rgba(57, 76, 104, 0.5)",
+                  borderRadius: "9px",
+                  p: 2,
+                }}
+              >
+                <Box mx={2} width="100%">
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    mb={2}
+                    sx={{ color: "#EDEDED" }}
+                  >
+                    <Typography>Intruders Captured</Typography>
+                    <Typography>
+                      {alertData && alertData["suspects"]}
+                    </Typography>
+                  </Box>
+                  <Grid
+                    container
+                    spacing={1}
+                    mt={1}
+                    sx={{ height: "450px", overflowY: "scroll", pr: 1 }}
+                  >
+                    {completeAlertData &&
+                      completeAlertData["notification_images"] &&
+                      completeAlertData["notification_images"].map(
+                        (data, pos) => {
+                          return (
+                            <IntrudersCard
+                              url={data["cropped_image"]}
+                              alertData={data}
+                              key={data["cropped_image"]}
+                              isSelected={index === pos}
+                              onClick={() => {
+                                setIndex(pos);
+                              }}
+                            />
+                          );
+                        }
+                      )}
+                  </Grid>
                 </Box>
-                <Grid
-                  container
-                  spacing={1}
-                  mt={1}
-                  sx={{ height: "450px", overflowY: "scroll", pr: 1 }}
-                >
-                  {alertData &&
-                    alertData["notification_images"] &&
-                    alertData["notification_images"].map((data, pos) => {
-                      return (
-                        <IntrudersCard
-                          url={data["cropped_image"]}
-                          alertData={data}
-                          key={data["cropped_image"]}
-                          isSelected={index === pos}
-                          onClick={() => {
-                            setIndex(pos);
-                          }}
-                        />
-                      );
-                    })}
-                </Grid>
               </Box>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={7}>
-            <Box mx={2} width="100%" mt={6}>
-              {/* <Box display="flex" mb={1} sx={{ color: "#EDEDED" }}>
+            </Grid>
+            <Grid item xs={12} md={7}>
+              <Box mx={2} width="100%" mt={6}>
+                {/* <Box display="flex" mb={1} sx={{ color: "#EDEDED" }}>
                 <Typography>Full View</Typography>
               </Box> */}
-              <FullImageCard
-                alertData={alertData}
-                index={index}
-                setIndex={setIndex}
-              />
-              <Box
-                mt={3}
-                display="flex"
-                width="100%"
-                alignItems="center"
-                justifyContent="space-around"
-              >
-                {alertData && alertData["isresolved"] === true ? (
-                  <CustomOutlinedButton
-                    text="Mark As Not Resolved"
-                    StartIcon={CancelIcon}
-                    sx={{ fontWeight: "400", background: "#202F46" }}
-                    onClick={() => {
-                      onRevert();
-                      handleClose();
-                    }}
-                  />
-                ) : (
-                  <CustomOutlinedButton
-                    text="Mark As Resolved"
-                    StartIcon={CheckCircleIcon}
-                    sx={{ fontWeight: "400", background: "#2EAB60" }}
-                    onClick={() => {
-                      onResponding();
-                      handleClose();
-                    }}
+                {completeAlertData && (
+                  <FullImageCard
+                    alertData={completeAlertData}
+                    index={index}
+                    setIndex={setIndex}
                   />
                 )}
+                <Box
+                  mt={3}
+                  display="flex"
+                  width="100%"
+                  alignItems="center"
+                  justifyContent="space-around"
+                >
+                  {completeAlertData &&
+                  completeAlertData["isresolved"] === true ? (
+                    <CustomOutlinedButton
+                      text="Mark As Not Resolved"
+                      StartIcon={CancelIcon}
+                      sx={{ fontWeight: "400", background: "#202F46" }}
+                      onClick={() => {
+                        onRevert();
+                        handleClose();
+                      }}
+                    />
+                  ) : (
+                    <CustomOutlinedButton
+                      text="Mark As Resolved"
+                      StartIcon={CheckCircleIcon}
+                      sx={{ fontWeight: "400", background: "#2EAB60" }}
+                      onClick={() => {
+                        onResponding();
+                        handleClose();
+                      }}
+                    />
+                  )}
 
-                <CustomOutlinedButton
-                  text={
-                    alertData && alertData["resolved"]
-                      ? "Close"
-                      : "Respond Later"
-                  }
-                  sx={{
-                    fontWeight: "400",
-                    background:
-                      alertData && alertData["resolved"]
-                        ? "#202F46"
-                        : "#D33A3A",
-                    borderTop: "1.5px solid #3C5170",
-                    width: "200px",
-                  }}
-                  onClick={() => {
-                    handleClose();
-                  }}
-                />
+                  <CustomOutlinedButton
+                    text={
+                      completeAlertData && completeAlertData["resolved"]
+                        ? "Close"
+                        : "Respond Later"
+                    }
+                    sx={{
+                      fontWeight: "400",
+                      background:
+                        completeAlertData && completeAlertData["resolved"]
+                          ? "#202F46"
+                          : "#D33A3A",
+                      borderTop: "1.5px solid #3C5170",
+                      width: "200px",
+                    }}
+                    onClick={() => {
+                      handleClose();
+                    }}
+                  />
+                </Box>
               </Box>
-            </Box>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      </LoadingOverlay>
     </Dialog>
   );
 };
@@ -253,7 +277,12 @@ const FullImageCard = ({ alertData, index, setIndex }) => {
   return (
     <Box position="relative">
       <img
-        src={alertData && alertData["notification_images"] && alertData["notification_images"][index] && alertData["notification_images"][index]["original_image"]}
+        src={
+          alertData &&
+          alertData["notification_images"] &&
+          alertData["notification_images"][index] &&
+          alertData["notification_images"][index]["original_image"]
+        }
         width="100%"
         style={{ marginBottom: "-5px", borderRadius: "9px" }}
       />
@@ -280,7 +309,9 @@ const FullImageCard = ({ alertData, index, setIndex }) => {
           top: 5,
           left: 0,
         }}
-      ><Typography ml={2}>{alertData && alertData['camera_label']}</Typography></Box>
+      >
+        <Typography ml={2}>{alertData && alertData["camera_label"]}</Typography>
+      </Box>
       <Box
         sx={{
           position: "absolute",

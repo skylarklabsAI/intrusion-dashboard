@@ -38,6 +38,8 @@ const Player = (props) => {
       <ReactHlsPlayer
         playerRef={playerRef}
         src={url}
+        // src="http://34.239.93.250/stream/65.1.13.229/c0008f5f-d835-4cc6-bfb6-15218c38d7d2/stream/stream.m3u8"
+        // src="https://prodserver.skylarklabs.ai/hls-proxy/stream/65.1.13.229/c0008f5f-d835-4cc6-bfb6-15218c38d7d2/stream/stream.m3u8"
         // src="https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8"
         autoPlay={true}
         // controls={true}

@@ -224,6 +224,18 @@ export const AuthProvider = ({ children }) => {
 
   const fetch_notifications = (url = "") => {
     return api.get(
+      `${notificationServiceBaseUrl}/notifications/quickgetnotification/${url}`
+    );
+  };
+
+  const fetch_detailed_notification = (id = "") => {
+    return api.get(
+      `${notificationServiceBaseUrl}/notifications/getnotification/${id}/`
+    );
+  };
+
+  const fetch_detailed_notifications = (url = "") => {
+    return api.get(
       `${notificationServiceBaseUrl}/notifications/getnotification/${url}`
     );
   };
@@ -267,6 +279,8 @@ export const AuthProvider = ({ children }) => {
         fetch_camera_by_id,
         fetch_notifications,
         fetch_next_notifications,
+        fetch_detailed_notification,
+        fetch_detailed_notifications,
         notification_resolve,
         notification_unresolve,
         logout,

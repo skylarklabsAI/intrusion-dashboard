@@ -73,7 +73,7 @@ export default function MyApp(props) {
       if (permission === "granted") {
         console.log("Notification permission granted.");
       } else {
-        toast.error("Allowwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww.......");
+        toast.error("Allow Notifications to see Real time Alerts.");
       }
     });
   }

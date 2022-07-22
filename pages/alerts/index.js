@@ -21,6 +21,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CustomDropDown from "../../components/CustomDropDown";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import useAuth from "../../auth/authContext";
+import LoadingOverlay from "react-loading-overlay";
 
 const recordsList = {
   1: {
@@ -383,7 +384,7 @@ const ListWrapper = ({
   const [loading, setLoading] = useState(false);
   const [nextLink, setNextLink] = useState(null);
   const {
-    fetch_notifications,
+    fetch_detailed_notifications,
     fetch_cameras,
     cameraList,
     fetch_next_notifications,
@@ -418,13 +419,13 @@ const ListWrapper = ({
   };
 
   const handleFetchNotifications = () => {
-    const url = "?limit=40";
+    const url = "?limit=10";
     if (from !== null)
       url += `&start_time=${moment(from).startOf("day").toISOString()}`;
     if (to !== null)
       url += `&end_time=${moment(to).endOf("day").toISOString()}`;
     if (selectedLocation !== "all") url += `&camera_id=${selectedLocation}`;
-    fetch_notifications(url)
+    fetch_detailed_notifications(url)
       .then((res) => {
         setNextLink(res.data.next);
         console.log(res.data.results);
@@ -502,6 +503,13 @@ const ListWrapper = ({
             />
           );
         })}
+        {loading && (
+          <LoadingOverlay active={true} text="Fetching more alerts" spinner>
+            <Box height="100px" width="200px">
+              {" "}
+            </Box>
+          </LoadingOverlay>
+        )}
       </Grid>
     </Box>
   );
