@@ -31,79 +31,7 @@ const Player =
   // global?.window &&
   dynamic(() => import("../../components/Player"), { ssr: false });
 
-const locations = {
-  // 1: {
-  //   name: "Parking Lot",
-  //   cameras: [
-  //     {
-  //       camera_id: 1,
-  //       name: "Front Cam LS 1",
-  //       url: "/2a.mp4",
-  //       thumbnail_url: "/images/parking_lot_thumbnail.png",
-  //     },
-  //   ],
-  // },
-  // 2: {
-  //   name: "Backyard",
-  //   cameras: [
-  //     {
-  //       camera_id: 2,
-  //       name: "Cam HX 2",
-  //       url: "/1a.mp4",
-  //       thumbnail_url: "/images/house_entry_thumbnail.png",
-  //     },
-  //   ],
-  // },
-  // 3: {
-  //   name: "Campus Exit",
-  //   cameras: [
-  //     {
-  //       camera_id: 3,
-  //       name: "Cam T 100",
-  //       url: "/3a.mp4",
-  //       thumbnail_url: "/images/house_exit_thumbnail.png",
-  //     },
-  //   ],
-  // },
-  // 4: {
-  //   name: "Complex 4 - Region 2",
-  //   cameras: [
-  //     {
-  //       camera_id: 4,
-  //       name: "Cam G 141",
-  //       url: "/4a.mp4",
-  //       thumbnail_url: "/images/4a_thumbnail.png",
-  //     },
-  //   ],
-  // },
-};
-
-const cameraList = [
-  // {
-  //   camera_id: 1,
-  //   name: "Front Cam LS 1",
-  //   url: "/2a.mp4",
-  //   thumbnail_url: "/images/parking_lot_thumbnail.png",
-  // },
-  // {
-  //   camera_id: 2,
-  //   name: "Cam HX 2",
-  //   url: "/1a.mp4",
-  //   thumbnail_url: "/images/house_entry_thumbnail.png",
-  // },
-  // {
-  //   camera_id: 3,
-  //   name: "Cam T 100",
-  //   url: "/3a.mp4",
-  //   thumbnail_url: "/images/house_exit_thumbnail.png",
-  // },
-  // {
-  //   camera_id: 4,
-  //   name: "Cam G 141",
-  //   url: "/4a.mp4",
-  //   thumbnail_url: "/images/4a_thumbnail.png",
-  // },
-];
+const locations = {};
 
 const HomeScreen = () => {
   const [selectedLocation, setSelectedLocation] = React.useState("all");
@@ -111,12 +39,8 @@ const HomeScreen = () => {
   const [records, setRecords] = React.useState([]);
   const [openAlertDialog, setOpenAlertDialog] = React.useState(false);
   const [alertData, setAlertData] = React.useState({});
-  const [waiting, setWaiting] = React.useState(false);
+  const [init, setInit] = React.useState(false);
   const { fetch_cameras, cameraList, fetch_notifications } = useAuth();
-
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
 
   React.useEffect(() => {
     fetch_cameras();
@@ -147,31 +71,14 @@ const HomeScreen = () => {
   }, [selectedCamera]);
 
   React.useEffect(() => {
+    if (init) return;
     if (cameraList.length !== 0) {
       setSelectedCamera(cameraList[0]);
+      setInit(true);
     } else {
       setSelectedCamera(null);
     }
   }, [cameraList]);
-
-  const playNext = () => {
-    console.log("start");
-    if (openAlertDialog === true) {
-      setWaiting(true);
-      return;
-    }
-    setSelectedCamera(cameraList[selectedCamera["camera_id"] % 4]);
-    console.log("done");
-  };
-
-  React.useEffect(() => {
-    if (!openAlertDialog && waiting) {
-      sleep(1000).then(() => {
-        setSelectedCamera(cameraList[selectedCamera["camera_id"] % 4]);
-        setWaiting(false);
-      });
-    }
-  }, [openAlertDialog]);
 
   return (
     <Box
@@ -204,7 +111,6 @@ const HomeScreen = () => {
             setOpenAlertDialog={setOpenAlertDialog}
             alertData={alertData}
             setAlertData={setAlertData}
-            playNext={playNext}
             cameraList={cameraList}
           />
         </Grid>
@@ -355,7 +261,6 @@ const LiveWrapper = ({
   setOpenAlertDialog,
   alertData,
   setAlertData,
-  playNext,
   cameraList,
 }) => {
   const handleLocationChange = (event) => {
