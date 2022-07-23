@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Container,
   Dialog,
   Grid,
@@ -14,6 +15,7 @@ import { useEffect, useState } from "react";
 import CustomOutlinedButton from "./CustomButton";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import useAuth from "../auth/authContext";
+import MuiNextLink from "./MuiNextLink";
 import moment from "moment";
 
 const AlertDialog = ({ open, handleClose, alertData = { image: "[]" } }) => {
@@ -117,10 +119,24 @@ const AlertDialog = ({ open, handleClose, alertData = { image: "[]" } }) => {
             </Box>
           </Grid>
           <Grid item xs={12} md={7}>
-            <Box mx={2} width="100%" mt={6}>
-              {/* <Box display="flex" mb={1} sx={{ color: "#EDEDED" }}>
-                <Typography>Full View</Typography>
-              </Box> */}
+            <Box mx={2} width="100%" mt={1}>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="flex-end"
+                mb={1}
+              >
+                <MuiNextLink href={`/home/${alertData["camera_id"]}`}>
+                  <Button
+                    color="error"
+                    size="large"
+                    sx={{ textTransform: "none" }}
+                    onClick={handleClose}
+                  >
+                    Watch Live
+                  </Button>
+                </MuiNextLink>
+              </Box>
               <FullImageCard
                 alertData={alertData}
                 index={index}
@@ -277,7 +293,9 @@ const FullImageCard = ({ alertData, index, setIndex, images }) => {
           top: 5,
           left: 0,
         }}
-      ><Typography ml={2}>{alertData && alertData['camera_label']}</Typography></Box>
+      >
+        <Typography ml={2}>{alertData && alertData["camera_label"]}</Typography>
+      </Box>
       <Box
         display="flex"
         justifyContent="space-between"
